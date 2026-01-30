@@ -1,4 +1,4 @@
-# Anon - An eCommerce Website
+Minimart - An eCommerce Website
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/codewithsadee/anon-ecommerce-website)
 ![GitHub stars](https://img.shields.io/github/stars/codewithsadee/anon-ecommerce-website?style=social)
@@ -35,10 +35,4 @@ Windows:
 git clone https://github.com/codewithsadee/anon-ecommerce-website.git
 ```
 
-## Contact
 
-If you want to contact me you can reach me at [Twitter](https://www.twitter.com/codewithsadee).
-
-## License
-
-This project is **free to use** and does not contains any license.
