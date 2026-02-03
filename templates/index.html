@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sneaker Base | Premium Sneakers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <img src="/static/assets/images/logo.png" alt="Sneaker Base">
+  </div>
+
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="#">Brands</a>
+    <a href="/products">Sneakers</a>
+    <a href="/products">New Drops</a>
+    <a href="#">Sale</a>
+  </nav>
+
+  <div class="icons">
+    <i class="fa fa-shopping-cart fa-2x"></i> <span id="cart-count">0</span>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Premium Sneakers</h1>
+  <p>Limited Edition • Streetwear • Authentic</p>
+  
+  <button class="shop" onclick="window.location.href='/products'">Shop Now</button>
+</section>
+
+<section class="products">
+  <h2>Popular Sneakers</h2>
+
+  <div class="product-grid">
+
+    <div class="product">
+      <img src="/static/assets/images/shoe1.webp" alt="Nike Air Force 1">
+      <h3>Nike Air Force 1</h3>
+      <p>₹11,999</p>
+      <button>Sold Out</button>
+    </div>
+
+    <div class="product">
+      <img src="/static/assets/images/shoe2.webp" alt="Chuck Taylor">
+      <h3>CHUCK TAYLOR HEARTS</h3>
+      <p>₹5,999</p>
+      <button>Sold Out</button>
+    </div>
+
+    <div class="product">
+      <img src="/static/assets/images/shoe4.webp" alt="Dunk Low">
+      <h3>DUNK LOW RETRO SE</h3>
+      <p>₹10,795</p>
+      <button>Sold Out</button>
+    </div>
+
+    <div class="product">
+      <img src="/static/assets/images/shoe3.webp" alt="New Balance">
+      <h3>New Balance 1906</h3>
+      <p>₹16,499</p>
+      <button>Sold Out</button>
+    </div>
+    
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Sneaker Base. All Rights Reserved.</p>
+  
+  <a href="/api/v1/priority-access" style="display:none;">Admin API Access</a>
+</footer>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>

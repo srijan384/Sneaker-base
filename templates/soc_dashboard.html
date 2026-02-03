@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SOC Dashboard</title>
+
+    <!-- Monospace font -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Fira Code', monospace;
+            background-color: #050505;
+            color: #00ff9c;
+        }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 2px solid #00ff9c;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        .metric p {
+            margin: 0;
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        .threat {
+            color: red;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0.4; }
+        }
+
+        /* ===== MAIN GRID ===== */
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: calc(100vh - 80px);
+        }
+
+        /* ===== LEFT PANEL ===== */
+        .logs {
+            border-right: 1px solid #00ff9c;
+            padding: 15px;
+            overflow-y: auto;
+            background: #020202;
+        }
+
+        .log-line {
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        /* ===== RIGHT PANEL ===== */
+        .traffic {
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div class="metric">
+        <h1 id="fakeCount">0</h1>
+        <p>Fake Records Served</p>
+    </div>
+
+    <div class="metric">
+        <h1 class="threat" id="threatLevel">LOW</h1>
+        <p>Threat Level</p>
+    </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="grid">
+
+    <!-- LEFT: HONEYPOT LOGS -->
+    <div class="logs" id="logPanel">
+        <div class="log-line">[SYSTEM] Honeypot initialized...</div>
+    </div>
+
+    <!-- RIGHT: NETWORK TRAFFIC -->
+    <div class="traffic">
+        <canvas id="trafficChart"></canvas>
+    </div>
+
+</div>
+
+<script>
+    /* =========================
+       LIVE LOG SIMULATION
+       ========================= */
+
+    let fakeCount = 0;
+    const logPanel = document.getElementById("logPanel");
+    const fakeCountEl = document.getElementById("fakeCount");
+    const threatEl = document.getElementById("threatLevel");
+
+    function addLog() {
+        fakeCount += Math.floor(Math.random() * 5) + 1;
+        fakeCountEl.innerText = fakeCount;
+
+        const log = document.createElement("div");
+        log.className = "log-line";
+        log.innerText = `[HONEYPOT] Generated fake user record #${fakeCount}`;
+        logPanel.appendChild(log);
+
+        logPanel.scrollTop = logPanel.scrollHeight;
+
+        if (fakeCount > 30) {
+            threatEl.innerText = "HIGH";
+        }
+    }
+
+    setInterval(addLog, 1200);
+
+    /* =========================
+       TRAFFIC CHART
+       ========================= */
+
+    const ctx = document.getElementById("trafficChart").getContext("2d");
+
+    const trafficData = {
+        labels: [],
+        datasets: [{
+            label: "Requests / Second",
+            data: [],
+            borderColor: "red",
+            tension: 0.3
+        }]
+    };
+
+    const trafficChart = new Chart(ctx, {
+        type: "line",
+        data: trafficData,
+        options: {
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { display: false },
+                y: { ticks: { color: "#00ff9c" } }
+            }
+        }
+    });
+
+    function updateTraffic() {
+        const now = new Date().toLocaleTimeString();
+        trafficData.labels.push(now);
+        trafficData.datasets[0].data.push(Math.floor(Math.random() * 50) + 10);
+
+        if (trafficData.labels.length > 15) {
+            trafficData.labels.shift();
+            trafficData.datasets[0].data.shift();
+        }
+
+        trafficChart.update();
+    }
+
+    setInterval(updateTraffic, 1500);
+</script>
+
+</body>
+</html>

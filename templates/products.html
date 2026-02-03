@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sneaker Base | Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">
+    <img src="/static/assets/images/logo.png" alt="Sneaker Base">
+  </div>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products">Sneakers</a>
+  </nav>
+  <div class="icons">
+    <i class="fa fa-shopping-cart fa-2x"></i> <span>0</span>
+  </div>
+</header>
+
+<section class="products" style="padding-top: 20px;">
+  <h2 style="color: {% if mode == 'bot' %} red {% else %} black {% endif %};">
+      {% if mode == 'bot' %}
+          🔥 LIVE RESTOCK (Hurry!)
+      {% else %}
+          All Sneakers (Sold Out)
+      {% endif %}
+  </h2>
+
+  <div class="product-grid">
+    {% for item in products %}
+    <div class="product">
+      <img src="{{ item.image }}">
+      
+      <h3>{{ item.name }}</h3>
+      <p>{{ item.price }}</p>
+
+      <button style="background-color: {{ item.btn_color }}; color: white; cursor: {% if item.status == 'SOLD OUT' %}not-allowed{% else %}pointer{% endif %};">
+        {{ item.btn_text }}
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% if next_page %}
+  <div style="text-align: center; margin-top: 40px;">
+      <a href="/products?page={{ next_page }}" style="display: inline-block; padding: 12px 24px; background: black; color: white; text-decoration: none; font-weight: bold;">Load Next Page...</a>
+  </div>
+  {% endif %}
+
+</section>
+
+<footer>
+  <p>© 2026 Sneaker Base. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
