@@ -25,9 +25,12 @@
     <a href="#">Sale</a>
   </nav>
 
-  <div class="icons">
-    <i class="fa fa-shopping-cart fa-2x"></i> <span id="cart-count">0</span>
-  </div>
+  <a href="/cart" style="text-decoration: none; color: inherit;">
+    <div class="icons">
+         <i class="fa fa-shopping-cart fa-2x"></i> 
+         <span>{{ cart_count }}</span>
+    </div>
+</a>
 </header>
 
 <section class="hero">

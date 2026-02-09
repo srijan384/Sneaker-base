@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cart | Sneaker Base</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body style="background: white;">
+
+<header class="header">
+  <div class="logo">
+    <img src="/static/assets/images/logo.png" alt="Sneaker Base">
+  </div>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products">Shop More</a>
+  </nav>
+</header>
+
+<section style="padding: 50px; text-align: center;">
+  <h1>Your Shopping Cart</h1>
+  
+  {% if cart %}
+    <div style="max-width: 800px; margin: 30px auto; text-align: left;">
+      {% for item in cart %}
+      <div style="display: flex; align-items: center; border-bottom: 1px solid #ddd; padding: 15px;">
+        <img src="{{ item.image }}" style="width: 80px; height: 80px; object-fit: contain;">
+        <div style="margin-left: 20px;">
+            <h3>{{ item.name }}</h3>
+            <p>Price: ₹{{ item.price }}</p>
+        </div>
+      </div>
+      {% endfor %}
+      
+      <h2 style="margin-top: 20px; text-align: right;">Total: ₹{{ total }}</h2>
+      
+      <div style="text-align: right; margin-top: 20px;">
+        <a href="/clear_cart" style="color: red; text-decoration: none; margin-right: 20px;">Clear Cart</a>
+        <button style="padding: 10px 30px; background: black; color: white; border: none; font-size: 18px;">Checkout</button>
+      </div>
+    </div>
+  {% else %}
+    <p>Your cart is empty.</p>
+    <a href="/products" style="color: blue;">Go buy some sneakers!</a>
+  {% endif %}
+</section>
+
+</body>
+</html>
