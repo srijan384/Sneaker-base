@@ -26,12 +26,13 @@ def home():
 def products():
     ip = get_client_ip()
     page = int(request.args.get("page", 1))
+    brand_filter = request.args.get("brand") # 1. Get the brand from URL
     cart_count = len(session.get('cart', []))
     
     is_bot = ip in BLOCKED_IPS and BLOCKED_IPS[ip]["score"] >= 50
 
     if is_bot:
-        # === BOT MODE ===
+        # === BOT MODE (HONEYPOT) ===
         print(f"🤖 Serving FAKE DATA to {ip}")
         BLOCKED_IPS[ip]["fake_served"] += 12
         if page > 2: time.sleep(min(page * 0.5, 4)) 
@@ -41,27 +42,41 @@ def products():
 
         for _ in range(12):
             img = random.choice(available_images)
+            
+            # 2. Smart Bot Logic: If bot asks for "Nike", generate "Nike" shoes!
+            if brand_filter:
+                name = f"{fake.word().capitalize()} {brand_filter}"
+            else:
+                name = f"{fake.word().capitalize()} {random.choice(['Air', 'Jordan', 'Dunk'])}"
+
             fake_products.append({
-                "name": f"{fake.word().capitalize()} {random.choice(['Air', 'Jordan', 'Dunk'])}",
-                "price": random.randint(15000, 85000), # stored as integer for math
+                "name": name,
+                "price": random.randint(15000, 85000), 
                 "display_price": f"₹{random.randint(15000, 85000)}",
                 "image": f"/static/assets/images/{img}",
                 "status": "IN STOCK",
                 "btn_color": "#28a745",
                 "btn_text": "ADD TO CART"
             })
+        
         return render_template("products.html", products=fake_products, next_page=page+1, mode="bot", cart_count=cart_count)
 
     else:
-        # === HUMAN MODE ===
+        # === HUMAN MODE (REAL SHOP) ===
         real_products = [
             {"name": "Nike Air Force 1", "price": 11999, "display_price": "₹11,999", "image": "/static/assets/images/shoe1.webp", "status": "SOLD OUT", "btn_color": "#333", "btn_text": "SOLD OUT"},
             {"name": "CHUCK TAYLOR HEARTS", "price": 5999, "display_price": "₹5,999", "image": "/static/assets/images/shoe2.webp", "status": "SOLD OUT", "btn_color": "#333", "btn_text": "SOLD OUT"},
             {"name": "New Balance 1906", "price": 16499, "display_price": "₹16,499", "image": "/static/assets/images/shoe3.webp", "status": "SOLD OUT", "btn_color": "#333", "btn_text": "SOLD OUT"},
             {"name": "DUNK LOW RETRO", "price": 10795, "display_price": "₹10,795", "image": "/static/assets/images/shoe4.webp", "status": "SOLD OUT", "btn_color": "#333", "btn_text": "SOLD OUT"},
+            # ... Add more shoes here if you want ...
         ]
-        return render_template("products.html", products=real_products, next_page=None, mode="human", cart_count=cart_count)
 
+        # 3. Filter Real Products
+        if brand_filter:
+            # Only keep shoes where the Name contains the Brand (case insensitive)
+            real_products = [p for p in real_products if brand_filter.lower() in p['name'].lower()]
+
+        return render_template("products.html", products=real_products, next_page=None, mode="human", cart_count=cart_count)
 # --- CART LOGIC ---
 
 @app.route("/add_to_cart", methods=["POST"])

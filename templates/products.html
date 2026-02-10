@@ -1,74 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sneaker Base | Shop</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="/static/style.css">
-</head>
+    <meta charset="UTF-8">
+    <title>Sneaker Base | Shop</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .product-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; }
+        .product { background: white; padding: 20px; border-radius: 10px; text-align: center; width: 250px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .product img { width: 100%; height: auto; border-radius: 10px; }
+        button { cursor: pointer; transition: 0.3s; }
+        button:hover { opacity: 0.8; }
 
+        /* --- NEW DROPDOWN CSS --- */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 5px;
+            top: 100%;
+            left: 0;
+        }
+        .dropdown-content a {
+            color: black !important;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            font-size: 16px;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+            color: #ff6600 !important;
+        }
+        /* Show menu on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
 <body>
 
 <header class="header">
-  <div class="logo">
-    <img src="/static/assets/images/logo.png" alt="Sneaker Base">
-  </div>
-  <nav class="nav-links">
-    <a href="/">Home</a>
-    <a href="/products">Sneakers</a>
-  </nav>
-  <a href="/cart" style="text-decoration: none; color: inherit;">
-    <div class="icons">
-         <i class="fa fa-shopping-cart fa-2x"></i> 
-         <span>{{ cart_count }}</span>
+    <div class="logo">
+        <img src="/static/assets/images/logo.png" alt="Sneaker Base">
     </div>
-</a>
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        
+        <div class="dropdown">
+            <a href="#" style="cursor: pointer;">Brands ▾</a>
+            <div class="dropdown-content">
+                <a href="/products?brand=Jordan">Air Jordan</a>
+                <a href="/products?brand=Nike">Nike</a>
+                <a href="/products?brand=Adidas">Adidas</a>
+                <a href="/products?brand=Yeezy">Yeezy</a>
+                <a href="/products">All Brands</a>
+            </div>
+        </div>
+
+        <a href="/products">Sneakers</a>
+    </nav>
+
+    <a href="/cart" style="color: black; text-decoration: none;">
+        <div class="icons">
+             <i class="fa fa-shopping-cart fa-2x"></i> <span id="cart-count">{{ cart_count }}</span>
+        </div>
+    </a>
 </header>
 
 <section class="products" style="padding-top: 20px;">
-  <h2 style="color: {% if mode == 'bot' %} red {% else %} black {% endif %};">
-      {% if mode == 'bot' %}
-          🔥 LIVE RESTOCK (Hurry!)
-      {% else %}
-          All Sneakers (Sold Out)
-      {% endif %}
-  </h2>
+    <div class="product-grid">
+        {% for item in products %}
+        <div class="product">
+            <img src="{{ item.image }}">
+            <h3>{{ item.name }}</h3>
+            <p>{{ item.display_price }}</p>
 
- <div class="product-grid">
-    {% for item in products %}
-    <div class="product">
-        <img src="{{ item.image }}">
-        <h3>{{ item.name }}</h3>
-        <p>{{ item.display_price }}</p>
-
-        <button 
-            onclick="addToCart('{{ item.name }}', '{{ item.price }}', '{{ item.image }}')"
-            style="background-color: {{ item.btn_color }}; 
-                   color: white; 
-                   cursor: pointer; 
-                   border: none; 
-                   padding: 10px 20px; 
-                   border-radius: 5px; 
-                   margin-top: 10px;">
-            {{ item.btn_text }}
-        </button>
+            <button 
+                onclick="directAddToCart('{{ item.name }}', '{{ item.price }}', '{{ item.image }}')"
+                style="background-color: {{ item.btn_color }}; color: white; border: none; padding: 10px 20px; border-radius: 5px; width: 100%;">
+                {{ item.btn_text }}
+            </button>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
 
-  {% if next_page %}
-  <div style="text-align: center; margin-top: 40px;">
-      <a href="/products?page={{ next_page }}" style="display: inline-block; padding: 12px 24px; background: black; color: white; text-decoration: none; font-weight: bold;">Load Next Page...</a>
-  </div>
-  {% endif %}
-
+    {% if next_page %}
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="/products?page={{ next_page }}" style="display: inline-block; padding: 12px 24px; background: black; color: white; text-decoration: none; border-radius: 5px;">Load More...</a>
+    </div>
+    {% endif %}
 </section>
 
-<footer>
-  <p>© 2026 Sneaker Base. All Rights Reserved.</p>
-</footer>
-<script src="/static/script.js"></script>
+<script>
+    function directAddToCart(name, price, image) {
+        console.log("Adding to cart:", name);
+
+        // check if button says "SOLD OUT"
+        if (name.includes("Sold Out") || price === "0") {
+            alert("This item is sold out!");
+            return;
+        }
+
+        fetch('/add_to_cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, price: price, image: image })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Success:", data);
+            // Update the counter
+            document.getElementById('cart-count').innerText = data.count;
+            alert("✅ Added to Cart: " + name);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert("❌ Error: " + error);
+        });
+    }
+</script>
+
 </body>
 </html>

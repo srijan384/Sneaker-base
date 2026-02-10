@@ -1,5 +1,6 @@
-// Function to Add Item to Cart (Connects to Flask)
 function addToCart(name, price, image) {
+    console.log("Attempting to add:", name); // Debugging line
+
     fetch('/add_to_cart', {
         method: 'POST',
         headers: {
@@ -13,11 +14,15 @@ function addToCart(name, price, image) {
     })
     .then(response => response.json())
     .then(data => {
-        // Update the Cart Counter in the Header
-        document.querySelector('.icons span').innerText = data.count;
-        alert("Added to Cart: " + name);
+        console.log("Success:", data);
+        alert("Added to Cart: " + name); // Visual confirmation
+        
+        // Update the cart count number in the header
+        let counter = document.querySelector('.icons span');
+        if (counter) counter.innerText = data.count;
     })
     .catch((error) => {
         console.error('Error:', error);
+        alert("Error adding to cart. Check console.");
     });
 }
