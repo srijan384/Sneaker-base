@@ -8,13 +8,40 @@
 <body style="background: white;">
 
 <header class="header">
-  <div class="logo">
-    <img src="/static/assets/images/logo.png" alt="Sneaker Base">
-  </div>
-  <nav class="nav-links">
-    <a href="/">Home</a>
-    <a href="/products">Shop More</a>
-  </nav>
+    <div class="logo">
+        <img src="/static/assets/images/logo.png" alt="Sneaker Base">
+    </div>
+    
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/products">Men</a>
+        <a href="/products">Women</a>
+        <a href="/products">New In</a>
+        
+        <div class="dropdown">
+            <a href="#" style="cursor: pointer;">Brands ▾</a>
+            <div class="dropdown-content">
+                <a href="/products?brand=Jordan">Air Jordan</a>
+                <a href="/products?brand=Nike">Nike</a>
+                <a href="/products?brand=Adidas">Adidas</a>
+                <a href="/products?brand=Yeezy">Yeezy</a>
+                <a href="/products">All Brands</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="icons" style="display: flex; align-items: center; gap: 20px;">
+        <a href="/wishlist" title="My Wishlist" style="color: black; text-decoration: none;">
+            <i class="fa fa-heart-o fa-2x"></i>
+        </a>
+
+        <a href="/cart" style="color: black; text-decoration: none;">
+             <i class="fa fa-shopping-cart fa-2x"></i> 
+             {% if cart_count and cart_count > 0 %}
+             <span id="cart-count" style="background: black; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; vertical-align: top;">{{ cart_count }}</span>
+             {% endif %}
+        </a>
+    </div>
 </header>
 
 <section style="padding: 50px; text-align: center;">

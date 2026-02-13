@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Wishlist | Sneaker Base</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    <style>
+        /* --- GLOBAL RESET --- */
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; margin: 0; padding: 0; color: #111; background-color: #fff; }
+
+        /* --- HEADER --- */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid #f0f0f0; }
+        .logo img { height: 40px; }
+        .nav-links a { text-decoration: none; color: black; margin: 0 15px; font-weight: 500; }
+        .icons a { color: black; text-decoration: none; margin-left: 20px; }
+
+        /* --- CONTAINER --- */
+        .container { max-width: 1200px; margin: 50px auto; padding: 0 20px; }
+        .page-title { font-size: 42px; font-weight: 300; margin-bottom: 40px; }
+
+        /* --- WISHLIST ITEM ROW --- */
+        .wishlist-item { display: flex; align-items: flex-start; border-bottom: 1px solid #e5e5e5; padding: 40px 0; }
+
+        /* IMAGE */
+        .item-image { width: 180px; height: 180px; background-color: #f9f9f9; display: flex; align-items: center; justify-content: center; margin-right: 40px; }
+        .item-image img { max-width: 100%; max-height: 100%; mix-blend-mode: multiply; }
+
+        /* DETAILS */
+        .item-details { flex-grow: 1; }
+        .item-brand { font-size: 14px; color: #555; margin-bottom: 5px; text-transform: uppercase; }
+        .item-name { font-size: 18px; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; }
+        .item-meta { font-size: 14px; color: #555; margin-bottom: 5px; }
+        
+        /* NEW SIZE STYLE */
+        .item-size { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 5px; }
+
+        .item-price { font-size: 16px; font-weight: 500; margin-top: 10px; margin-bottom: 20px; }
+        .stock-status { font-size: 12px; color: #777; }
+
+        /* ACTIONS */
+        .item-actions { display: flex; gap: 60px; padding-top: 10px; }
+        .action-btn { background: none; border: none; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; padding: 0; transition: 0.2s; }
+        .btn-remove:hover { color: #777; text-decoration: underline; }
+        .btn-add:hover { color: #ff6600; }
+
+        /* EMPTY STATE */
+        .empty-msg { text-align: center; margin-top: 80px; color: #777; }
+        .btn-shop { background: black; color: white; padding: 15px 30px; text-decoration: none; display: inline-block; margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">
+        <img src="/static/assets/images/logo.png" alt="Sneaker Base">
+    </div>
+    
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/products">Men</a>
+        <a href="/products">Women</a>
+        <a href="/products">New In</a>
+        
+        <div class="dropdown">
+            <a href="#" style="cursor: pointer;">Brands ▾</a>
+            <div class="dropdown-content">
+                <a href="/products?brand=Jordan">Air Jordan</a>
+                <a href="/products?brand=Nike">Nike</a>
+                <a href="/products?brand=Adidas">Adidas</a>
+                <a href="/products?brand=Yeezy">Yeezy</a>
+                <a href="/products">All Brands</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="icons" style="display: flex; align-items: center; gap: 20px;">
+        <a href="/wishlist" title="My Wishlist" style="color: black; text-decoration: none;">
+            <i class="fa fa-heart-o fa-2x"></i>
+        </a>
+
+        <a href="/cart" style="color: black; text-decoration: none;">
+             <i class="fa fa-shopping-cart fa-2x"></i> 
+             {% if cart_count and cart_count > 0 %}
+             <span id="cart-count" style="background: black; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; vertical-align: top;">{{ cart_count }}</span>
+             {% endif %}
+        </a>
+    </div>
+</header>
+
+<div class="container">
+    <div class="page-title">My Wishlist</div>
+
+    {% if products|length == 0 %}
+        <div class="empty-msg">
+            <h2>Your wishlist is empty</h2>
+            <p>Save items you love to view them here later.</p>
+            <a href="/products" class="btn-shop">Start Shopping</a>
+        </div>
+    {% else %}
+        
+        {% for item in products %}
+        <div class="wishlist-item">
+            <div class="item-image">
+                <img src="{{ item.image }}" alt="{{ item.name }}">
+            </div>
+
+            <div class="item-details">
+                <div class="item-brand">NIKE</div>
+                <div class="item-name">{{ item.name }}</div>
+                <div class="item-meta">Color: Multi / Standard</div>
+                
+                <div class="item-size">Size: {{ item.size }}</div>
+                
+                <div class="item-price">{{ item.price }}</div>
+                <div class="stock-status">In Stock</div>
+            </div>
+
+            <div class="item-actions">
+                <button class="action-btn btn-remove" onclick="removeFromWishlist('{{ item.name }}')">
+                    REMOVE
+                </button>
+
+                <button class="action-btn btn-add" 
+                    onclick="moveToCart('{{ item.name }}', '{{ item.price }}', '{{ item.image }}', '{{ item.size }}')">
+                    ADD TO CART
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+
+    {% endif %}
+</div>
+
+<script>
+    // 1. Remove Logic
+    function removeFromWishlist(name) {
+        if(!confirm("Remove this item?")) return;
+        fetch('/api/toggle_wishlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name })
+        }).then(() => window.location.reload());
+    }
+
+    // 2. Add to Cart Logic (Updated to handle Size)
+    function moveToCart(name, price, image, size) {
+        // Send size along with other data
+        fetch('/add_to_cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: name, price: price, image: image, size: size })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert("✅ " + name + " (Size: " + size + ") added to Cart!");
+        });
+    }
+</script>
+
+</body>
+</html>

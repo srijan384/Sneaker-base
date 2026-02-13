@@ -1,57 +1,210 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title >{{ product.title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/info.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <meta charset="UTF-8">
+    <title>{{ product.title }} | Sneaker Base</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        /* RESET & FONTS */
+        body { background-color: #fff; color: #111; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; margin: 0; }
+
+        /* LAYOUT GRID */
+        .product-wrapper { display: flex; max-width: 1200px; margin: 40px auto; padding: 0 40px; gap: 60px; }
+
+        /* LEFT SIDE: IMAGE */
+        .image-section { flex: 1.5; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px; padding: 40px; }
+        .image-section img { width: 100%; max-width: 600px; mix-blend-mode: multiply; }
+
+        /* RIGHT SIDE: INFO */
+        .info-section { flex: 1; display: flex; flex-direction: column; }
+
+        /* TYPOGRAPHY */
+        .category-label { color: #707072; font-size: 14px; font-weight: 500; margin-bottom: 5px; }
+        h1 { font-size: 28px; font-weight: 500; margin: 0 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .price { font-size: 18px; font-weight: 500; margin-bottom: 5px; }
+        .tax-note { color: #707072; font-size: 12px; margin-bottom: 30px; }
+
+        /* BUTTONS */
+        .btn-black {
+            background-color: #111; color: white; width: 100%; padding: 18px;
+            border-radius: 30px; font-size: 16px; font-weight: 500; border: none;
+            cursor: pointer; margin-bottom: 10px; transition: 0.3s;
+        }
+        .btn-black:hover { background-color: #333; }
+        
+        /* FAVORITE BUTTON STYLE */
+        .btn-outline {
+            background-color: white; color: #111; width: 100%; padding: 18px;
+            border-radius: 30px; font-size: 16px; font-weight: 500;
+            border: 1px solid #ccc; cursor: pointer; margin-bottom: 30px;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            transition: 0.2s;
+        }
+        .btn-outline:hover { border-color: #111; }
+        .btn-outline.active { border-color: #d32f2f; color: #d32f2f; } /* Red Border */
+        .btn-outline.active i { color: #d32f2f; } /* Red Icon */
+
+        /* HEADER & SIZE BOXES */
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; background: white; border-bottom: 1px solid #eee; }
+        .nav-links a { text-decoration: none; color: black; margin: 0 15px; font-weight: 500; }
+        .logo img { height: 40px; }
+        .size-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+        .size-box { border: 1px solid #ddd; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .size-box:hover { border-color: #999; }
+        .size-box.selected { border-color: black; background-color: black; color: white; }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo">
-          <img src="/static/assets/images/logo.png" alt="Sneaker Base">
-        </div>
-      
-        <nav class="nav-links">
-          <a href="/">Home</a>
-          <div class="dropdown">
-          <a href="#" style="padding-bottom: 20px;">Brands ▾</a>
-          <div class="dropdown-content">
-              <a href="/products?brand=Jordan">Air Jordan</a>
-              <a href="/products?brand=Nike">Nike</a>
-              <a href="/products?brand=Adidas">Adidas</a>
-              <a href="/products?brand=Yeezy">Yeezy</a>
-              <a href="/products">All Brands</a>
-          </div>
-      </div>
-          <a href="/products">Sneakers</a>
-          <a href="/products">New Drops</a>
-          <a href="#">Sale</a>
-        </nav>
-      
-        <a href="/cart" style="text-decoration: none; color: inherit;">
-          <div class="icons">
-               <i class="fa fa-shopping-cart fa-2x"></i> 
-               <span>{{ cart_count }}</span>
-          </div>
-      </a>
-      </header>
-      <a href="/" class="back">⬅ Back to Home</a>   
-      <h1 class="name">{{ product.title }}</h1>
-<section class="info">
-    <div>
-<img src="{{ product.thumbnail }}" width="350" class="prodimg">
-    </div>
-    <div class="details">
-<p><b>Brand:</b> {{ product.brand }}</p>
-<p><b>Price:</b> ₹{{ product.price * 80 }}</p>
-<p><b>Rating:</b> ⭐ {{ product.rating }}</p>
-<p><b>Stock:</b> {{ product.stock }}</p>
 
-<p class="desc">{{ product.description }}</p>
+<header class="header">
+    <div class="logo">
+        <img src="/static/assets/images/logo.png" alt="Sneaker Base">
+    </div>
+    
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/products">Men</a>
+        <a href="/products">Women</a>
+        <a href="/products">New In</a>
+        
+        <div class="dropdown">
+            <a href="#" style="cursor: pointer;">Brands ▾</a>
+            <div class="dropdown-content">
+                <a href="/products?brand=Jordan">Air Jordan</a>
+                <a href="/products?brand=Nike">Nike</a>
+                <a href="/products?brand=Adidas">Adidas</a>
+                <a href="/products?brand=Yeezy">Yeezy</a>
+                <a href="/products">All Brands</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="icons" style="display: flex; align-items: center; gap: 20px;">
+        <a href="/wishlist" title="My Wishlist" style="color: black; text-decoration: none;">
+            <i class="fa fa-heart-o fa-2x"></i>
+        </a>
+
+        <a href="/cart" style="color: black; text-decoration: none;">
+             <i class="fa fa-shopping-cart fa-2x"></i> 
+             {% if cart_count and cart_count > 0 %}
+             <span id="cart-count" style="background: black; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; vertical-align: top;">{{ cart_count }}</span>
+             {% endif %}
+        </a>
+    </div>
+</header>
+
+<div class="product-wrapper">
+    <div class="image-section">
+        <img src="{{ product.thumbnail }}" alt="{{ product.title }}">
+    </div>
+
+    <div class="info-section">
+        <div class="category-label">Men's Shoes</div>
+        <h1>{{ product.title }}</h1>
+        <div class="price">MRP : ₹{{ product.price }}</div>
+        <div class="tax-note">incl. of taxes</div>
+
+        <p style="font-weight: 500; margin-bottom: 10px;">Select Size</p>
+        <div class="size-grid">
+            <div class="size-box" onclick="selectSize(this)">UK 6</div>
+            <div class="size-box" onclick="selectSize(this)">UK 7</div>
+            <div class="size-box" onclick="selectSize(this)">UK 8</div>
+            <div class="size-box" onclick="selectSize(this)">UK 9</div>
+            <div class="size-box" onclick="selectSize(this)">UK 10</div>
+        </div>
+
+        <button class="btn-black" onclick="addToCart()">Add to Bag</button>
+        
+        <button class="btn-outline" id="favBtn" 
+            onclick="toggleFavorite(this, '{{ product.title }}', '{{ product.price }}', '{{ product.thumbnail }}')">
+            Favorite <i class="fa fa-heart-o"></i>
+        </button>
+
+        <p style="margin-top: 20px; line-height: 1.6; color: #555;">{{ product.description }}</p>
+    </div>
 </div>
-</section>
-<button class="cart" function="addToCart(name, price, image)">Add To Cart</button>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<script>
+    let selectedSize = null;
+
+    // 1. SELECT SIZE LOGIC
+    function selectSize(el) {
+        document.querySelectorAll('.size-box').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedSize = el.innerText;
+    }
+
+    // 2. ADD TO CART LOGIC
+    function addToCart() {
+        if (!selectedSize) {
+            alert("Please select a size first!");
+            return;
+        }
+
+        const productData = {
+            name: "{{ product.title }}",
+            price: "{{ product.price }}",
+            image: "{{ product.thumbnail }}",
+            size: selectedSize
+        };
+
+        fetch('/add_to_cart', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(productData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert("✅ Added to Bag!");
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert("❌ Error adding to cart");
+        });
+    }
+
+    // 3. WISHLIST FUNCTION (UPDATED)
+    function toggleFavorite(btn, name, price, image) {
+        
+        // --- NEW CHECK: IS A SIZE SELECTED? ---
+        // Only run this check if we are ADDING the item (not removing)
+        if (!btn.classList.contains("active")) {
+            if (!selectedSize) {
+                alert("Please select a size to add to wishlist!");
+                return; // STOP HERE if no size is picked
+            }
+        }
+
+        // --- EXISTING TOGGLE LOGIC ---
+        btn.classList.toggle("active");
+        let icon = btn.querySelector("i");
+        
+        if (btn.classList.contains("active")) {
+            icon.classList.remove("fa-heart-o");
+            icon.classList.add("fa-heart"); 
+            btn.innerHTML = 'Favorited <i class="fa fa-heart"></i>'; 
+        } else {
+            icon.classList.remove("fa-heart");
+            icon.classList.add("fa-heart-o"); 
+            btn.innerHTML = 'Favorite <i class="fa fa-heart-o"></i>'; 
+        }
+
+        // Send to Backend (including size now!)
+        fetch('/api/toggle_wishlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                name: name, 
+                price: price, 
+                image: image, 
+                size: selectedSize // We save the size too
+            })
+        })
+        .then(res => res.json())
+        .then(data => console.log("Wishlist updated:", data));
+    }
+</script>
+
 </body>
 </html>
