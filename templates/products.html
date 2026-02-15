@@ -30,6 +30,17 @@
         }
         .fav-btn i { color: #ccc; font-size: 18px; transition: 0.2s; }
         .fav-btn.active i { color: red; } /* Red when liked */
+        .load-more-btn{
+    display:inline-block;
+    padding:14px 28px;
+    background:black;
+    color:white;
+    text-decoration:none;
+    border-radius:10px;
+    font-weight:600;
+    transition:0.2s;
+}
+.load-more-btn:hover{ background:#333; }
     </style>
 </head>
 <body>
@@ -93,7 +104,13 @@
         {% endfor %}
     </div>
 </section>
-
+{% if mode == "bot" %}
+<div style="text-align:center;margin:40px 0;">
+    <a href="/products?page={{ next_page }}" class="load-more-btn">
+        Load More
+    </a>
+</div>
+{% endif %}
 <script>
     // FUNCTION TO SAVE FAVORITE
     function toggleHeart(btn, name, price, image) {
@@ -114,6 +131,7 @@
             console.log("Wishlist updated:", data);
         });
     }
+    
 
     // FUNCTION FOR CART (Existing)
     function directAddToCart(name) { /* ... Your existing cart logic ... */ }
