@@ -1,3 +1,4 @@
+
 import time
 import random
 from faker import Faker
@@ -8,13 +9,48 @@ app = Flask(__name__)
 app.secret_key = "sneaker-base-secret"
 fake = Faker()
 
-# GLOBAL MEMORY
+# ---------------- GLOBAL MEMORY ----------------
 BLOCKED_IPS = {}
 
-# ---------------- FIX 1: SAME USER FOR LOCALHOST ----------------
+# ---------------- SNEAKER DATASET ----------------
+
+BRANDS = ["Nike", "Adidas", "Puma", "New Balance", "Jordan"]
+
+MODELS = [
+"Air Max","Air Force","Air Jordan","Ultraboost",
+"Dunk Low","Forum Low","Future Rider","RS-X",
+"React Vision","Blazer Mid","NMD R1","Yeezy Boost",
+"574 Classic","327 Runner","990 Sport"
+]
+
+IMAGES = [
+"/static/assets/images/shoe1.webp",
+"/static/assets/images/shoe2.webp",
+"/static/assets/images/shoe3.webp",
+"/static/assets/images/shoe4.webp",
+"/static/assets/images/shoe5.webp"
+]
+
+SNEAKER_DB = []
+
+for i in range(60):
+
+    brand = random.choice(BRANDS)
+    model = random.choice(MODELS)
+    price = random.randint(7000,22000)
+
+    SNEAKER_DB.append({
+        "id": i,
+        "name": f"{brand} {model}",
+        "price": price,
+        "image": random.choice(IMAGES)
+    })
+
+
+# ---------------- CLIENT IP ----------------
 def get_client_ip():
     ip = request.remote_addr
-    if ip in ("127.0.0.1", "::1"):
+    if ip in ("127.0.0.1","::1"):
         return "LOCAL_TEST_USER"
     return ip
 
@@ -22,49 +58,42 @@ def get_client_ip():
 # ---------------- HOME ----------------
 @app.route("/")
 def home():
-    cart_count = len(session.get('cart', []))
+    cart_count = len(session.get('cart',[]))
     return render_template("index.html", cart_count=cart_count)
 
 
-# ---------------- PRODUCTS (HONEYPOT SWITCH) ----------------
+# ---------------- PRODUCTS ----------------
 @app.route("/products")
 def products():
+
     ip = get_client_ip()
-    cart_count = len(session.get('cart', []))
+    cart_count = len(session.get('cart',[]))
 
     is_bot = ip in BLOCKED_IPS and BLOCKED_IPS[ip]["score"] >= 50
-    page = int(request.args.get("page", 1))
+    page = int(request.args.get("page",1))
     per_page = 12
 
     # ---------------- BOT MODE ----------------
     if is_bot:
-        print("🤖 Serving FAKE PRODUCTS PAGE", page, "to", ip)
 
-        try:
-            # fetch real api
-            url = "https://dummyjson.com/products/category/mens-shoes"
-            response = requests.get(url, timeout=5)
-            data = response.json().get("products", [])
-
-        except:
-            data = []
+        print("🤖 BOT DETECTED → serving fake sneakers")
 
         fake_products = []
 
         start = (page-1) * per_page
         end = start + per_page
 
-        for i in range(start, min(end, start + per_page)):
-            base = random.choice(data) if data else {}
+        for i in range(start,end):
 
-            fake_price = random.randint(15000, 85000)
-            brand = random.choice(["Nike", "Adidas", "Puma", "New Balance", "Jordan"])
+            fake_price = random.randint(15000,85000)
+            brand = random.choice(BRANDS)
 
             fake_products.append({
-                "name": f"{brand} {fake.word().capitalize()} {random.choice(['Air','Retro','Pro','Max'])}",
+                "id": i,
+                "name": f"{brand} {fake.word().capitalize()} {random.choice(['Air','Retro','Max','Pro'])}",
                 "price": fake_price,
                 "display_price": f"₹{fake_price:,}",
-                "image": base.get("thumbnail", "/static/assets/images/shoe1.webp"),
+                "image": random.choice(IMAGES),
                 "status": random.choice(["IN STOCK","LOW STOCK","ONLY 1 LEFT"]),
                 "btn_color": "#28a745",
                 "btn_text": "ADD TO CART"
@@ -81,11 +110,37 @@ def products():
         )
 
     # ---------------- HUMAN MODE ----------------
-    real_products = [
-        {"name":"Nike Air Force 1","price":11999,"display_price":"₹11,999","image":"/static/assets/images/shoe1.webp","status":"SOLD OUT","btn_color":"#333","btn_text":"SOLD OUT"},
-        {"name":"New Balance 1906","price":16499,"display_price":"₹16,499","image":"/static/assets/images/shoe2.webp","status":"SOLD OUT","btn_color":"#333","btn_text":"SOLD OUT"},
-        {"name":"Dunk Low Retro","price":10795,"display_price":"₹10,795","image":"/static/assets/images/shoe3.webp","status":"SOLD OUT","btn_color":"#333","btn_text":"SOLD OUT"}
-    ]
+
+    category = request.args.get("category")
+    brand = request.args.get("brand")
+
+    data = SNEAKER_DB.copy()
+
+    if category == "women":
+        random.shuffle(data)
+
+    elif category == "new":
+        random.shuffle(data)
+
+    real_products = []
+
+    for item in data:
+
+        name = item["name"]
+
+        if brand and brand.lower() not in name.lower():
+            continue
+
+        real_products.append({
+            "id": item["id"],
+            "name": name,
+            "price": item["price"],
+            "display_price": f"₹{item['price']:,}",
+            "image": item["image"],
+            "status": random.choice(["IN STOCK","LOW STOCK"]),
+            "btn_color": "#000",
+            "btn_text": "ADD TO CART"
+        })
 
     return render_template(
         "products.html",
@@ -95,79 +150,137 @@ def products():
         cart_count=cart_count
     )
 
-# ---------------- CART ----------------
+
+# ---------------- ADD TO CART ----------------
 @app.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
+
     data = request.json
+
     if 'cart' not in session:
         session['cart'] = []
+
     session['cart'].append(data)
     session.modified = True
-    return jsonify({"count": len(session['cart']), "message": "Item added!"})
+
+    return jsonify({
+        "count": len(session['cart']),
+        "message": "Item added!"
+    })
 
 
+# ---------------- CART PAGE ----------------
 @app.route("/cart")
 def view_cart():
-    cart = session.get('cart', [])
+
+    cart = session.get('cart',[])
     total = 0
+
     for item in cart:
+
         try:
             clean_price = str(item['price']).replace('₹','').replace(',','').strip()
             total += int(float(clean_price))
         except:
             pass
-    return render_template("cart.html", cart=cart, total=total, cart_count=len(cart))
+
+    return render_template(
+        "cart.html",
+        cart=cart,
+        total=total,
+        cart_count=len(cart)
+    )
 
 
+# ---------------- CLEAR CART ----------------
 @app.route("/clear_cart")
 def clear_cart():
-    session.pop('cart', None)
+
+    session.pop('cart',None)
     return redirect(url_for('view_cart'))
 
 
-# ---------------- REAL API ----------------
-@app.route("/api/sneakers")
-def api_sneakers():
-    try:
-        url = "https://dummyjson.com/products/category/mens-shoes"
-        response = requests.get(url, timeout=5)
-        data = response.json()
+# ---------------- WISHLIST ----------------
+@app.route("/wishlist")
+def wishlist():
 
-        sneakers = []
-        for item in data.get("products", [])[:20]:
-            sneakers.append({
-                "id": item.get("id"),
-                "name": item.get("title"),
-                "price": item.get("price"),
-                "image": item.get("thumbnail")
-            })
-        return jsonify(sneakers)
+    items = session.get('wishlist',[])
 
-    except:
-        return jsonify([])
+    return render_template(
+        "wishlist.html",
+        products=items,
+        cart_count=len(session.get('cart',[]))
+    )
 
 
-# ---------------- TRAP ----------------
+# ---------------- WISHLIST API ----------------
+@app.route("/api/toggle_wishlist", methods=["POST"])
+def toggle_wishlist():
+
+    data = request.json
+
+    if 'wishlist' not in session:
+        session['wishlist'] = []
+
+    existing = False
+    new_list = []
+
+    for item in session['wishlist']:
+
+        if item['name'] == data['name']:
+            existing = True
+        else:
+            new_list.append(item)
+
+    if not existing:
+        new_list.append(data)
+        action = "added"
+    else:
+        action = "removed"
+
+    session['wishlist'] = new_list
+    session.modified = True
+
+    return jsonify({
+        "status": action,
+        "count": len(session['wishlist'])
+    })
+
+
+# ---------------- BOT TRAP ----------------
 @app.route("/api/v1/priority-access")
 def trap():
+
     ip = get_client_ip()
+
     if ip not in BLOCKED_IPS:
-        BLOCKED_IPS[ip] = {"score": 0, "fake_served": 0}
+        BLOCKED_IPS[ip] = {"score":0,"fake_served":0}
 
     BLOCKED_IPS[ip]["score"] += 100
+
     print("🚨 BOT MARKED:", ip)
 
-    return jsonify({"error": "Invalid API Key"}), 403
+    return jsonify({"error":"Invalid API Key"}),403
 
 
 # ---------------- STATS ----------------
 @app.route("/api/stats")
 def stats():
-    bot_count = len([ip for ip,data in BLOCKED_IPS.items() if data["score"]>=50])
+
+    bot_count = len([
+        ip for ip,data in BLOCKED_IPS.items()
+        if data["score"] >= 50
+    ])
+
     fake_count = sum(d["fake_served"] for d in BLOCKED_IPS.values())
-    return jsonify({"active_bots":bot_count,"fake_records":fake_count})
+
+    return jsonify({
+        "active_bots": bot_count,
+        "fake_records": fake_count
+    })
 
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
+
