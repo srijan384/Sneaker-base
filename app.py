@@ -2,7 +2,6 @@
 import time
 import random
 from faker import Faker
-import requests
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 
 app = Flask(__name__)
@@ -31,6 +30,8 @@ IMAGES = [
 "/static/assets/images/shoe5.webp"
 ]
 
+GENDERS = ["men","women"]
+
 SNEAKER_DB = []
 
 for i in range(60):
@@ -39,10 +40,17 @@ for i in range(60):
     model = random.choice(MODELS)
     price = random.randint(7000,22000)
 
+    # slightly bias dataset
+    if "Dunk" in model or "Air" in model:
+        gender = random.choice(["women","men"])
+    else:
+        gender = random.choice(GENDERS)
+
     SNEAKER_DB.append({
         "id": i,
         "name": f"{brand} {model}",
         "price": price,
+        "gender": gender,
         "image": random.choice(IMAGES)
     })
 
@@ -116,8 +124,12 @@ def products():
 
     data = SNEAKER_DB.copy()
 
-    if category == "women":
-        random.shuffle(data)
+    # filter by gender
+    if category == "men":
+        data = [shoe for shoe in data if shoe["gender"] == "men"]
+
+    elif category == "women":
+        data = [shoe for shoe in data if shoe["gender"] == "women"]
 
     elif category == "new":
         random.shuffle(data)
@@ -279,7 +291,10 @@ def stats():
         "fake_records": fake_count
     })
 
-
+# ---------------- BOT DASHBOARD ----------------
+@app.route("/soc")
+def soc_dashboard():
+    return render_template("soc_dashboard.html")
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
