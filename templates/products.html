@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,28 +17,46 @@ gap:20px;
 padding:20px;
 }
 
+/* product card */
+
 .product{
 background:white;
 padding:20px;
-border-radius:10px;
+border-radius:12px;
 text-align:center;
-width:250px;
-box-shadow:0 4px 8px rgba(0,0,0,0.1);
+width:260px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
 position:relative;
-transition:0.25s;
+transition:0.3s;
 }
 
 .product:hover{
-transform:translateY(-6px);
-box-shadow:0 8px 20px rgba(0,0,0,0.15);
+transform:translateY(-8px);
+box-shadow:0 12px 28px rgba(0,0,0,0.12);
 }
 
-.product img{
+/* shoe image */
+
+.shoe-img{
 width:100%;
-height:200px;
+height:180px;
 object-fit:contain;
+background:#f7f7f7;
+padding:15px;
 border-radius:10px;
 }
+
+/* brand logo */
+
+.brand-logo{
+height:28px;
+width:auto;
+object-fit:contain;
+margin-top:8px;
+margin-bottom:8px;
+}
+
+/* dropdown */
 
 .dropdown{
 position:relative;
@@ -148,8 +165,7 @@ background:#333;
 
 <a href="/">Home</a>
 
-<a href="/products?category=men">Men</a>
-<a href="/products?category=women">Women</a>
+<a href="/products?category=unisex">Unisex</a>
 <a href="/products?category=new">New In</a>
 
 <div class="dropdown">
@@ -161,7 +177,7 @@ background:#333;
 <a href="/products?brand=Jordan">Air Jordan</a>
 <a href="/products?brand=Nike">Nike</a>
 <a href="/products?brand=Adidas">Adidas</a>
-<a href="/products?brand=Yeezy">Yeezy</a>
+<a href="/products?brand=Puma">Puma</a>
 <a href="/products">All Brands</a>
 
 </div>
@@ -208,7 +224,7 @@ onclick="toggleHeart(this,'{{ item.name }}','{{ item.display_price }}','{{ item.
 
 <a href="/product/{{ item.id }}" style="text-decoration:none;color:inherit;">
 
-<img src="{{ item.image }}">
+<img src="{{ item.image }}" class="shoe-img">
 
 <h3>{{ item.name }}</h3>
 
@@ -229,18 +245,12 @@ Add To Cart
 </section>
 
 
-{% if mode == "bot" %}
-
+{% if next_page %}
 <div style="text-align:center;margin:40px 0;">
-
 <a href="/products?page={{ next_page }}" class="load-more-btn">
-
 Load More
-
 </a>
-
 </div>
-
 {% endif %}
 
 
@@ -315,4 +325,3 @@ icon.parentElement.appendChild(span)
 
 </body>
 </html>
-```

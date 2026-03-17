@@ -58,9 +58,8 @@
     
     <nav class="nav-links">
         <a href="/">Home</a>
-        <a href="/products">Men</a>
-        <a href="/products">Women</a>
-        <a href="/products">New In</a>
+        <a href="/products?category=unisex">Unisex</a>
+        <a href="/products?category=new">New In</a>
         
         <div class="dropdown">
             <a href="#" style="cursor: pointer;">Brands ▾</a>
@@ -97,42 +96,7 @@
 <section class="products">
   <h2>Popular Sneakers</h2>
 
-  <div class="product-grid" id="product-grid">
-
-    <div class="product">
-        <button class="fav-btn" onclick="toggleHeart(this, 'Nike Air Jordan 1', '₹12,749', '/static/assets/images/image_a2edb9.png')">
-            <i class="fa fa-heart"></i>
-        </button>
-        <a href="/products" style="text-decoration: none; color: inherit;">
-            <img src="/static/assets/images/image_a2edb9.png" alt="Jordan 1">
-            <h3>Nike Air Jordan 1</h3>
-            <p>₹12,749</p>
-        </a>
-    </div>
-
-    <div class="product">
-        <button class="fav-btn" onclick="toggleHeart(this, 'Nike Vomero Plus', '₹15,295', '/static/assets/images/image_971f9c.jpg')">
-            <i class="fa fa-heart"></i>
-        </button>
-        <a href="/products" style="text-decoration: none; color: inherit;">
-            <img src="/static/assets/images/image_971f9c.jpg" alt="Vomero">
-            <h3>Nike Vomero Plus</h3>
-            <p>₹15,295</p>
-        </a>
-    </div>
-
-    <div class="product">
-        <button class="fav-btn" onclick="toggleHeart(this, 'Nike Baseball Cleats', '₹6,399', '/static/assets/images/image_971833.png')">
-            <i class="fa fa-heart"></i>
-        </button>
-        <a href="/products" style="text-decoration: none; color: inherit;">
-            <img src="/static/assets/images/image_971833.png" alt="Cleats">
-            <h3>Nike Baseball Cleats</h3>
-            <p>₹6,399</p>
-        </a>
-    </div>
-
-  </div>
+  <div class="product-grid" id="product-grid"></div>
 </section>
 
 <footer>
@@ -160,6 +124,55 @@
         })
         .catch(error => console.error("Error:", error));
     }
+
+</script>
+<script>
+
+async function loadSneakers(){
+
+try{
+
+const res = await fetch("/api/sneakers")
+const data = await res.json()
+
+const grid = document.getElementById("product-grid")
+
+grid.innerHTML=""
+
+data.forEach(shoe => {
+
+grid.innerHTML += `
+<div class="product">
+
+<button class="fav-btn" onclick="toggleHeart(this,'${shoe.name}','${shoe.price}','${shoe.image}')">
+<i class="fa fa-heart"></i>
+</button>
+
+<a href="/products" style="text-decoration:none;color:inherit;">
+
+<img src="${shoe.image}">
+<h3>${shoe.name}</h3>
+<p>${shoe.price}</p>
+
+</a>
+
+</div>
+`
+
+})
+
+}
+catch(err){
+
+document.getElementById("product-grid").innerHTML =
+"<p style='color:red'>Failed to load sneakers.</p>"
+
+}
+
+}
+
+loadSneakers()
+
 </script>
 </body>
 </html>

@@ -1,8 +1,6 @@
-
-import time
 import random
 from faker import Faker
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session
 
 app = Flask(__name__)
 app.secret_key = "sneaker-base-secret"
@@ -11,47 +9,104 @@ fake = Faker()
 # ---------------- GLOBAL MEMORY ----------------
 BLOCKED_IPS = {}
 
-# ---------------- SNEAKER DATASET ----------------
+# ---------------- BRAND LOGOS ----------------
+BRAND_LOGOS = {
+    "Nike": "/static/assets/brands/nike.jpg",
+    "Adidas": "/static/assets/brands/adidas.jpg",
+    "Puma": "/static/assets/brands/puma.jpg",
+    "Jordan": "/static/assets/brands/jordan.jpg",
+    "New Balance": "/static/assets/brands/newbalance.jpg",
+    "Asics": "/static/assets/brands/asics.jpg",
+    "Reebok": "/static/assets/brands/reebok.jpg",
+    "Converse": "/static/assets/brands/converse.jpg",
+    "Vans": "/static/assets/brands/vans.jpg",
+    "Under Armour": "/static/assets/brands/ua.jpg"
+}
 
-BRANDS = ["Nike", "Adidas", "Puma", "New Balance", "Jordan"]
+# ---------------- BRANDS ----------------
+BRANDS = list(BRAND_LOGOS.keys())
 
-MODELS = [
-"Air Max","Air Force","Air Jordan","Ultraboost",
-"Dunk Low","Forum Low","Future Rider","RS-X",
-"React Vision","Blazer Mid","NMD R1","Yeezy Boost",
+# ---------------- BRAND MODELS ----------------
+BRAND_MODELS = {
+
+"Nike":[
+"Air Max","Air Force 1","Dunk Low","Blazer Mid","React Vision"
+],
+
+"Adidas":[
+"Ultraboost","NMD R1","Superstar","Stan Smith","Gazelle"
+],
+
+"Jordan":[
+"Air Jordan 1","Air Jordan 3","Air Jordan 4","Air Jordan Retro"
+],
+
+"Puma":[
+"RS-X","Future Rider","Suede Classic","Puma Runner"
+],
+
+"New Balance":[
 "574 Classic","327 Runner","990 Sport"
+],
+
+"Asics":[
+"Gel Kayano","Gel Nimbus","Gel Lyte"
+],
+
+"Reebok":[
+"Club C","Nano X","Classic Leather"
+],
+
+"Converse":[
+"Chuck Taylor","Run Star","All Star Lift"
+],
+
+"Vans":[
+"Old Skool","Sk8 Hi","Authentic"
+],
+
+"Under Armour":[
+"HOVR Phantom","Charged Rogue"
 ]
 
-IMAGES = [
-"/static/assets/images/shoe1.webp",
-"/static/assets/images/shoe2.webp",
-"/static/assets/images/shoe3.webp",
-"/static/assets/images/shoe4.webp",
-"/static/assets/images/shoe5.webp"
-]
+}
 
-GENDERS = ["men","women"]
+# ---------------- IMAGE COUNTS ----------------
+BRAND_IMAGE_COUNT = {
+"Nike":8,
+"Adidas":10,
+"Asics":10,
+"Converse":10,
+"Jordan":9,
+"New Balance":8,
+"Puma":5,
+"Reebok":5,
+"Under Armour":4,
+"Vans":9
+}
 
+# ---------------- DATASET ----------------
 SNEAKER_DB = []
 
-for i in range(60):
+for i in range(100):
 
     brand = random.choice(BRANDS)
-    model = random.choice(MODELS)
-    price = random.randint(7000,22000)
+    model = random.choice(BRAND_MODELS[brand])
+    price = random.randint(6500,22000)
 
-    # slightly bias dataset
-    if "Dunk" in model or "Air" in model:
-        gender = random.choice(["women","men"])
-    else:
-        gender = random.choice(GENDERS)
+    img_number = random.randint(1, BRAND_IMAGE_COUNT[brand])
+    folder = brand.lower().replace(" ","")
+
+    image = f"/static/assets/images/{folder}/{folder}{img_number}.jpg"
 
     SNEAKER_DB.append({
         "id": i,
+        "brand": brand,
+        "logo": BRAND_LOGOS.get(brand),
         "name": f"{brand} {model}",
         "price": price,
-        "gender": gender,
-        "image": random.choice(IMAGES)
+        "display_price": f"₹{price:,}",
+        "image": image
     })
 
 
@@ -74,93 +129,91 @@ def home():
 @app.route("/products")
 def products():
 
-    ip = get_client_ip()
-    cart_count = len(session.get('cart',[]))
-
-    is_bot = ip in BLOCKED_IPS and BLOCKED_IPS[ip]["score"] >= 50
     page = int(request.args.get("page",1))
     per_page = 12
 
-    # ---------------- BOT MODE ----------------
-    if is_bot:
-
-        print("🤖 BOT DETECTED → serving fake sneakers")
-
-        fake_products = []
-
-        start = (page-1) * per_page
-        end = start + per_page
-
-        for i in range(start,end):
-
-            fake_price = random.randint(15000,85000)
-            brand = random.choice(BRANDS)
-
-            fake_products.append({
-                "id": i,
-                "name": f"{brand} {fake.word().capitalize()} {random.choice(['Air','Retro','Max','Pro'])}",
-                "price": fake_price,
-                "display_price": f"₹{fake_price:,}",
-                "image": random.choice(IMAGES),
-                "status": random.choice(["IN STOCK","LOW STOCK","ONLY 1 LEFT"]),
-                "btn_color": "#28a745",
-                "btn_text": "ADD TO CART"
-            })
-
-        next_page = page + 1
-
-        return render_template(
-            "products.html",
-            products=fake_products,
-            next_page=next_page,
-            mode="bot",
-            cart_count=cart_count
-        )
-
-    # ---------------- HUMAN MODE ----------------
-
     category = request.args.get("category")
-    brand = request.args.get("brand")
+    brand_filter = request.args.get("brand")
 
     data = SNEAKER_DB.copy()
 
-    # filter by gender
-    if category == "men":
-        data = [shoe for shoe in data if shoe["gender"] == "men"]
+    if brand_filter:
+        data = [shoe for shoe in data if brand_filter.lower() in shoe["brand"].lower()]
 
-    elif category == "women":
-        data = [shoe for shoe in data if shoe["gender"] == "women"]
-
-    elif category == "new":
+    if category == "new":
         random.shuffle(data)
 
-    real_products = []
+    total = len(data)
 
-    for item in data:
+    start = (page-1)*per_page
+    end = start+per_page
 
-        name = item["name"]
+    data = data[start:end]
 
-        if brand and brand.lower() not in name.lower():
-            continue
-
-        real_products.append({
-            "id": item["id"],
-            "name": name,
-            "price": item["price"],
-            "display_price": f"₹{item['price']:,}",
-            "image": item["image"],
-            "status": random.choice(["IN STOCK","LOW STOCK"]),
-            "btn_color": "#000",
-            "btn_text": "ADD TO CART"
-        })
+    next_page = page+1 if end < total else None
 
     return render_template(
         "products.html",
-        products=real_products,
-        next_page=None,
-        mode="human",
-        cart_count=cart_count
+        products=data,
+        next_page=next_page,
+        cart_count=len(session.get('cart',[])),
+        mode="human"
     )
+
+
+# ---------------- PRODUCT PAGE ----------------
+@app.route("/product/<int:product_id>")
+def product_page(product_id):
+
+    product = None
+
+    for item in SNEAKER_DB:
+        if item["id"] == product_id:
+            product = item
+            break
+
+    if not product:
+        return "Product not found",404
+
+    recommended = random.sample(SNEAKER_DB,4)
+
+    if "recent" not in session:
+
+        session["recent"] = []
+
+    session["recent"].append(product)
+
+    session["recent"] = session["recent"][-4:]
+
+    session.modified = True
+
+    return render_template(
+    "product.html",
+    product=product,
+    recommended=recommended,
+    recent=session.get("recent",[]),
+    cart_count=len(session.get('cart', []))
+)
+    
+
+
+# ---------------- HOMEPAGE API ----------------
+@app.route("/api/sneakers")
+def api_sneakers():
+
+    sample = random.sample(SNEAKER_DB,4)
+
+    sneakers=[]
+
+    for item in sample:
+        sneakers.append({
+            "id": item["id"],
+            "name": item["name"],
+            "price": item["display_price"],
+            "image": item["image"]
+        })
+
+    return jsonify(sneakers)
 
 
 # ---------------- ADD TO CART ----------------
@@ -177,7 +230,41 @@ def add_to_cart():
 
     return jsonify({
         "count": len(session['cart']),
-        "message": "Item added!"
+        "message":"Item added!"
+    })
+
+
+# ---------------- TOGGLE WISHLIST ----------------
+@app.route("/api/toggle_wishlist", methods=["POST"])
+def toggle_wishlist():
+
+    data = request.json
+
+    if 'wishlist' not in session:
+        session['wishlist'] = []
+
+    existing=False
+    new_list=[]
+
+    for item in session['wishlist']:
+
+        if item['name']==data['name']:
+            existing=True
+        else:
+            new_list.append(item)
+
+    if not existing:
+        new_list.append(data)
+        action="added"
+    else:
+        action="removed"
+
+    session['wishlist']=new_list
+    session.modified=True
+
+    return jsonify({
+        "status":action,
+        "count":len(session['wishlist'])
     })
 
 
@@ -185,14 +272,13 @@ def add_to_cart():
 @app.route("/cart")
 def view_cart():
 
-    cart = session.get('cart',[])
-    total = 0
+    cart=session.get('cart',[])
+    total=0
 
     for item in cart:
-
         try:
-            clean_price = str(item['price']).replace('₹','').replace(',','').strip()
-            total += int(float(clean_price))
+            clean_price=str(item['price']).replace('₹','').replace(',','')
+            total+=int(clean_price)
         except:
             pass
 
@@ -204,19 +290,11 @@ def view_cart():
     )
 
 
-# ---------------- CLEAR CART ----------------
-@app.route("/clear_cart")
-def clear_cart():
-
-    session.pop('cart',None)
-    return redirect(url_for('view_cart'))
-
-
-# ---------------- WISHLIST ----------------
+# ---------------- WISHLIST PAGE ----------------
 @app.route("/wishlist")
-def wishlist():
+def wishlist_page():
 
-    items = session.get('wishlist',[])
+    items=session.get('wishlist',[])
 
     return render_template(
         "wishlist.html",
@@ -225,77 +303,12 @@ def wishlist():
     )
 
 
-# ---------------- WISHLIST API ----------------
-@app.route("/api/toggle_wishlist", methods=["POST"])
-def toggle_wishlist():
-
-    data = request.json
-
-    if 'wishlist' not in session:
-        session['wishlist'] = []
-
-    existing = False
-    new_list = []
-
-    for item in session['wishlist']:
-
-        if item['name'] == data['name']:
-            existing = True
-        else:
-            new_list.append(item)
-
-    if not existing:
-        new_list.append(data)
-        action = "added"
-    else:
-        action = "removed"
-
-    session['wishlist'] = new_list
-    session.modified = True
-
-    return jsonify({
-        "status": action,
-        "count": len(session['wishlist'])
-    })
-
-
-# ---------------- BOT TRAP ----------------
-@app.route("/api/v1/priority-access")
-def trap():
-
-    ip = get_client_ip()
-
-    if ip not in BLOCKED_IPS:
-        BLOCKED_IPS[ip] = {"score":0,"fake_served":0}
-
-    BLOCKED_IPS[ip]["score"] += 100
-
-    print("🚨 BOT MARKED:", ip)
-
-    return jsonify({"error":"Invalid API Key"}),403
-
-
-# ---------------- STATS ----------------
-@app.route("/api/stats")
-def stats():
-
-    bot_count = len([
-        ip for ip,data in BLOCKED_IPS.items()
-        if data["score"] >= 50
-    ])
-
-    fake_count = sum(d["fake_served"] for d in BLOCKED_IPS.values())
-
-    return jsonify({
-        "active_bots": bot_count,
-        "fake_records": fake_count
-    })
-
-# ---------------- BOT DASHBOARD ----------------
+# ---------------- SOC DASHBOARD ----------------
 @app.route("/soc")
 def soc_dashboard():
     return render_template("soc_dashboard.html")
+
+
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
-

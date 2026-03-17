@@ -238,3 +238,10 @@ footer {
 .dropdown:hover .dropdown-content {
     display: block;
 }
+.brand-logo{
+height:30px;
+width:auto;
+object-fit:contain;
+margin-top:10px;
+margin-bottom:5px;
+}
