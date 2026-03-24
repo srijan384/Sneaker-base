@@ -4,7 +4,7 @@
 ![CI/CD Pipeline](https://github.com/srijan384/Sneaker-base/actions/workflows/main.yml/badge.svg)
 
 
-Sneaker Base is a honeypot-based e-commerce web application developed as part of the ETT (Emerging Technology Trends) subject by a group of two students. The project simulates a real sneaker shopping platform while integrating a security mechanism to detect and trap bot activity. The system ensures that genuine users experience a normal e-commerce interface, while bots are redirected into a controlled fake environment.
+Sneaker Base is a honeypot-based e-commerce web application developed as part of the ETT (Emerging Technology Trends). The project simulates a real sneaker shopping platform while integrating a security mechanism to detect and trap bot activity. The system ensures that genuine users experience a normal e-commerce interface, while bots are redirected into a controlled fake environment.
 
 The primary objective of this project is to combine web development with cybersecurity concepts. It focuses on detecting automated or suspicious traffic and misleading it using a honeypot mechanism. Once a bot is detected, it is redirected to a fake version of the website where synthetic data is served, preventing access to real system functionality.
 
