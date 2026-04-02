@@ -1,313 +1,449 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Sneaker Base | Exclusive Drops 🔥</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <style>
-    :root {
-      --black: #0a0a0a; --white: #f5f5f5;
-      --accent: #e8ff00; --muted: #777; --card: #111;
-    }
-    * { margin:0; padding:0; box-sizing:border-box; }
-
-    body { background:var(--black); color:var(--white); font-family:'Inter',sans-serif; }
-
-    /* ── Header ── */
-    .header {
-      display:flex; justify-content:space-between; align-items:center;
-      padding:16px 48px; border-bottom:1px solid #1c1c1c; position:sticky; top:0;
-      background:rgba(10,10,10,0.95); backdrop-filter:blur(12px); z-index:100;
-    }
-    .logo { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:3px; }
-    .nav-links a { margin:0 14px; text-decoration:none; color:var(--muted);
-      font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
-    .nav-links a:hover { color:var(--white); }
-
-    /* ── Hero banner ── */
-    .hero-banner {
-      text-align:center; padding:48px 20px 32px;
-      background:linear-gradient(180deg, #111 0%, var(--black) 100%);
-    }
-    .hero-banner .eyebrow {
-      display:inline-block; background:var(--accent); color:var(--black);
-      font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase;
-      padding:4px 14px; border-radius:2px; margin-bottom:16px;
-      animation:pulse 2s infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-    .hero-banner h1 { font-family:'Bebas Neue',sans-serif; font-size:56px; letter-spacing:4px; }
-    .hero-banner p  { color:var(--muted); font-size:14px; margin-top:8px; }
-
-    /* ── Filters bar ── */
-    .filters {
-      display:flex; gap:10px; padding:16px 48px; flex-wrap:wrap;
-      border-bottom:1px solid #1a1a1a;
-    }
-    .filter-btn {
-      padding:7px 18px; background:#1a1a1a; border:1px solid #2a2a2a;
-      color:var(--muted); font-size:12px; font-weight:600; border-radius:20px;
-      cursor:pointer; letter-spacing:1px; text-transform:uppercase; transition:0.15s;
-    }
-    .filter-btn.active, .filter-btn:hover { background:var(--accent); color:var(--black); border-color:var(--accent); }
-
-    /* ── Product grid ── */
-    .product-grid {
-      display:grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap:20px; padding:32px 48px;
-    }
-
-    /* ── Product card ── */
-    .product-card {
-      background:var(--card); border-radius:14px; overflow:hidden;
-      border:1px solid #1e1e1e; transition:transform 0.25s, box-shadow 0.25s;
-      cursor:pointer; position:relative;
-    }
-    .product-card:hover { transform:translateY(-6px); box-shadow:0 20px 40px rgba(0,0,0,0.5); }
-
-    .card-badge {
-      position:absolute; top:12px; left:12px;
-      background:#ff3b3b; color:white; font-size:11px; font-weight:700;
-      padding:3px 9px; border-radius:4px; letter-spacing:1px;
-    }
-    .fav-btn {
-      position:absolute; top:10px; right:10px; background:rgba(255,255,255,0.08);
-      border:none; border-radius:50%; width:34px; height:34px; cursor:pointer;
-      display:flex; align-items:center; justify-content:center; z-index:5;
-      transition:0.2s;
-    }
-    .fav-btn:hover { background:rgba(255,255,255,0.15); }
-    .fav-btn i { color:#ccc; font-size:15px; }
-    .fav-btn.active i { color:#ff3b3b; }
-
-    .card-img-wrap {
-      background:#161616; padding:24px; display:flex;
-      align-items:center; justify-content:center; height:200px;
-    }
-    .card-img-wrap img { max-height:160px; max-width:100%; object-fit:contain;
-      transition:transform 0.3s; }
-    .product-card:hover .card-img-wrap img { transform:scale(1.08) rotate(-2deg); }
-
-    .card-body { padding:16px; }
-    .card-brand { font-size:11px; color:var(--muted); text-transform:uppercase;
-      letter-spacing:2px; margin-bottom:4px; }
-    .card-name  { font-size:14px; font-weight:600; margin-bottom:12px; line-height:1.3; }
-
-    .card-price-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
-    .card-price     { font-size:18px; font-weight:700; color:var(--accent); }
-    .card-orig      { font-size:13px; color:var(--muted); text-decoration:line-through; }
-    .card-discount  { font-size:11px; font-weight:700; background:#ff3b3b;
-      color:white; padding:2px 7px; border-radius:3px; }
-
-    .stock-row { display:flex; align-items:center; gap:6px; margin-bottom:14px; }
-    .stock-dot { width:7px; height:7px; border-radius:50%; background:#ff3b3b;
-      animation:blink 1.2s infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-    .stock-text { font-size:11px; color:#ff6b6b; font-weight:600; }
-
-    .add-btn {
-      width:100%; padding:11px; background:var(--accent); color:var(--black);
-      border:none; border-radius:8px; font-weight:700; font-size:13px;
-      cursor:pointer; letter-spacing:1px; text-transform:uppercase; transition:0.15s;
-    }
-    .add-btn:hover { background:#d4e800; }
-
-    /* ── Loader ── */
-    .loader {
-      text-align:center; padding:40px; color:var(--muted); font-size:13px;
-      letter-spacing:2px; text-transform:uppercase;
-    }
-    .loader-spinner {
-      width:32px; height:32px; border:2px solid #1e1e1e;
-      border-top-color:var(--accent); border-radius:50%;
-      animation:spin 0.8s linear infinite; margin:0 auto 12px;
-    }
-    @keyframes spin { to { transform:rotate(360deg); } }
-
-    /* ── Skeleton ── */
-    .skeleton { background:#161616; border-radius:14px; border:1px solid #1e1e1e; overflow:hidden; }
-    .skel-img  { height:200px; background:linear-gradient(90deg,#161616 25%,#1e1e1e 50%,#161616 75%);
-      background-size:200% 100%; animation:shimmer 1.5s infinite; }
-    .skel-body { padding:16px; }
-    .skel-line { height:12px; border-radius:4px; margin-bottom:10px;
-      background:linear-gradient(90deg,#161616 25%,#1e1e1e 50%,#161616 75%);
-      background-size:200% 100%; animation:shimmer 1.5s infinite; }
-    .skel-line.short { width:60%; }
-    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-    footer { text-align:center; padding:32px; color:#2a2a2a;
-      font-size:12px; border-top:1px solid #151515; margin-top:40px; }
-  </style>
+<meta charset="UTF-8">
+<!-- FAKE SIGNAL 1: Title says "Store" not "Shop" -->
+<title>Sneaker Base | Store</title>
+ 
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+ 
+<style>
+.product-grid{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:20px;
+padding:20px;
+}
+ 
+.product{
+background:white;
+padding:20px;
+border-radius:12px;
+text-align:center;
+width:260px;
+box-shadow:0 6px 18px rgba(0,0,0,0.08);
+position:relative;
+transition:0.3s;
+}
+ 
+.product:hover{
+transform:translateY(-8px);
+box-shadow:0 12px 28px rgba(0,0,0,0.12);
+}
+ 
+.shoe-img{
+width:100%;
+height:180px;
+object-fit:contain;
+background:#f7f7f7;
+padding:15px;
+border-radius:10px;
+}
+ 
+.brand-logo{
+height:28px;
+width:auto;
+object-fit:contain;
+margin-top:8px;
+margin-bottom:8px;
+}
+ 
+.dropdown{
+position:relative;
+display:inline-block;
+}
+ 
+.dropdown-content{
+display:none;
+position:absolute;
+background-color:white;
+min-width:160px;
+box-shadow:0px 8px 16px rgba(0,0,0,0.2);
+z-index:1000;
+border-radius:5px;
+top:100%;
+left:0;
+}
+ 
+.dropdown-content a{
+color:black !important;
+padding:12px 16px;
+text-decoration:none;
+display:block;
+text-align:left;
+}
+ 
+.dropdown:hover .dropdown-content{
+display:block;
+}
+ 
+.fav-btn{
+position:absolute;
+top:10px;
+right:10px;
+background:white;
+border:none;
+border-radius:50%;
+width:35px;
+height:35px;
+cursor:pointer;
+box-shadow:0 2px 5px rgba(0,0,0,0.2);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:10;
+}
+ 
+.fav-btn i{
+color:#ccc;
+font-size:18px;
+transition:0.2s;
+}
+ 
+.fav-btn.active i{
+color:red;
+}
+ 
+.product button{
+margin-top:10px;
+padding:10px;
+background:black;
+color:white;
+border:none;
+cursor:pointer;
+width:100%;
+border-radius:5px;
+}
+ 
+.product button:hover{
+background:#333;
+}
+ 
+.load-more-btn{
+display:inline-block;
+padding:14px 28px;
+background:black;
+color:white;
+text-decoration:none;
+border-radius:10px;
+font-weight:600;
+transition:0.2s;
+}
+ 
+.load-more-btn:hover{
+background:#333;
+}
+ 
+/* ── FAKE SIGNAL 2: Tiny red dot on logo (humans notice, bots don't) ── */
+.fake-dot{
+display:inline-block;
+width:7px;
+height:7px;
+background:red;
+border-radius:50%;
+vertical-align:top;
+margin-top:6px;
+margin-left:3px;
+}
+ 
+/* ── FAKE SIGNAL 3: SALE badge on every card ── */
+.sale-badge{
+position:absolute;
+top:10px;
+left:10px;
+background:#e00;
+color:white;
+font-size:10px;
+font-weight:700;
+padding:3px 7px;
+border-radius:3px;
+letter-spacing:1px;
+text-transform:uppercase;
+z-index:10;
+}
+ 
+/* ── FAKE SIGNAL 4: Stock text under price ── */
+.stock-text{
+font-size:11px;
+color:#e00;
+font-weight:600;
+margin:2px 0 6px;
+}
+ 
+/* ── Skeleton loader ── */
+.product.skeleton{ pointer-events:none; }
+.skel-img{
+width:100%; height:180px; border-radius:10px;
+background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);
+background-size:200% 100%; animation:shimmer 1.4s infinite;
+}
+.skel-line{
+height:14px; border-radius:4px; margin:10px auto;
+background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);
+background-size:200% 100%; animation:shimmer 1.4s infinite;
+}
+.skel-line.short{ width:55%; }
+@keyframes shimmer{
+0%  { background-position:200% 0; }
+100%{ background-position:-200% 0; }
+}
+ 
+#scroll-sentinel{ width:100%; height:1px; }
+</style>
 </head>
+ 
 <body>
-
+ 
+<!-- honeytrap links -->
+<a href="/trap/exclusive-access"
+   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
+   tabindex="-1" aria-hidden="true">exclusive-access</a>
+<a href="/api/v1/all-products-dump"
+   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
+   tabindex="-1" aria-hidden="true">product-dump</a>
+ 
 <header class="header">
-  <div class="logo">Sneaker Base</div>
-  <nav class="nav-links">
-    <a href="/">Home</a>
-    <a href="/products">Shop</a>
-    <a href="/wishlist">Wishlist</a>
-    <a href="/cart">Cart</a>
-  </nav>
+ 
+<div class="logo">
+    <img src="/static/assets/images/logo.png" alt="Sneaker Base">
+    <!-- FAKE SIGNAL 2: tiny red dot only on fake page -->
+    <span class="fake-dot" title="●"></span>
+</div>
+ 
+<nav class="nav-links">
+<a href="/">Home</a>
+<a href="/products?category=unisex">Unisex</a>
+<a href="/products?category=new">New In</a>
+ 
+<div class="dropdown">
+<a href="#" style="cursor:pointer;">Brands ▾</a>
+<div class="dropdown-content">
+<a href="/products?brand=Jordan">Air Jordan</a>
+<a href="/products?brand=Nike">Nike</a>
+<a href="/products?brand=Adidas">Adidas</a>
+<a href="/products?brand=Puma">Puma</a>
+<a href="/products">All Brands</a>
+</div>
+</div>
+</nav>
+ 
+<div class="icons" style="display:flex;align-items:center;gap:20px;">
+<a href="/wishlist" title="My Wishlist" style="color:black;text-decoration:none;">
+<i class="fa fa-heart-o fa-2x"></i>
+</a>
+<a href="/cart" style="color:black;text-decoration:none;">
+<i class="fa fa-shopping-cart fa-2x"></i>
+<span id="cart-count"
+      style="display:none;background:black;color:white;border-radius:50%;padding:2px 6px;font-size:12px;vertical-align:top;">
+0
+</span>
+</a>
+</div>
+ 
 </header>
-
-<div class="hero-banner">
-  <span class="eyebrow">⚡ Exclusive Drops — Members Only</span>
-  <h1>Hottest Sneakers</h1>
-  <p>Limited stock · Prices drop every hour · Authenticated pairs only</p>
-</div>
-
-<div class="filters">
-  <button class="filter-btn active" onclick="filterBy(this,'all')">All</button>
-  <button class="filter-btn" onclick="filterBy(this,'nike')">Nike</button>
-  <button class="filter-btn" onclick="filterBy(this,'jordan')">Jordan</button>
-  <button class="filter-btn" onclick="filterBy(this,'adidas')">Adidas</button>
-  <button class="filter-btn" onclick="filterBy(this,'puma')">Puma</button>
-  <button class="filter-btn" onclick="filterBy(this,'newbalance')">New Balance</button>
-</div>
-
+ 
+ 
+<section class="products" style="padding-top:20px;">
 <div class="product-grid" id="product-grid">
-  <!-- First batch rendered server-side -->
-  {% for item in products %}
-  <div class="product-card" onclick="goToProduct(parseInt('{{ item.id }}'))"></div>
-    <span class="card-badge">-{{ item.discount_pct }}%</span>
-    <button class="fav-btn" onclick="event.stopPropagation();toggleFav(this)">
-      <i class="fa fa-heart"></i>
+ 
+{% for item in products %}
+<div class="product">
+ 
+    <!-- FAKE SIGNAL 3: SALE badge -->
+    <span class="sale-badge">Sale</span>
+ 
+    <button class="fav-btn"
+            onclick="toggleHeart(this,'{{ item.name }}','{{ item.display_price }}','{{ item.image }}')">
+    <i class="fa fa-heart"></i>
     </button>
-    <div class="card-img-wrap">
-      <img src="{{ item.image }}" alt="{{ item.name }}" loading="lazy">
-    </div>
-    <div class="card-body">
-      <div class="card-brand">{{ item.brand }}</div>
-      <div class="card-name">{{ item.name }}</div>
-      <div class="card-price-row">
-        <span class="card-price">{{ item.display_price }}</span>
-        <span class="card-orig">{{ item.original_price }}</span>
-        <span class="card-discount">{{ item.discount_pct }}% OFF</span>
-      </div>
-      <div class="stock-row">
-        <span class="stock-dot"></span>
-        <span class="stock-text">Only {{ item.stock_left }} left!</span>
-      </div>
-      <button class="add-btn">Add To Cart</button>
-    </div>
-  </div>
-  {% endfor %}
+ 
+    <a href="/product/{{ item.id }}" style="text-decoration:none;color:inherit;">
+    <img src="{{ item.image }}" class="shoe-img">
+    <h3>{{ item.name }}</h3>
+    </a>
+ 
+    <!-- FAKE SIGNAL 5: price ends in .99 -->
+    <p>{{ item.display_price }}.99</p>
+ 
+    <!-- FAKE SIGNAL 4: stock count -->
+    <p class="stock-text">Only {{ item.stock_left }} left!</p>
+ 
+    <button onclick="directAddToCart('{{ item.name }}')">
+    Add To Cart
+    </button>
+ 
+</div>
+{% endfor %}
+ 
+</div>
+</section>
+ 
+<div id="scroll-sentinel"></div>
+
+<!-- Load More button — identical style to products.html -->
+<div style="text-align:center;margin:40px 0;" id="load-more-wrap">
+    <a class="load-more-btn" id="load-more-btn" onclick="loadMore()" style="cursor:pointer;">
+        Load More
+    </a>
 </div>
 
-<div class="loader" id="loader">
-  <div class="loader-spinner"></div>
-  Loading more drops...
+<div id="loading-indicator" style="text-align:center;margin:30px 0;display:none;">
+    <a class="load-more-btn" style="cursor:default;opacity:0.7;">Loading...</a>
 </div>
-
-<!-- Honeytrap links bots will follow -->
-<a href="/api/v1/all-products-dump" style="display:none;">Full Product Dump</a>
-<a href="/admin/export-users" style="display:none;">Export Users</a>
-<a href="/trap/exclusive-access" style="display:none;">Exclusive Access</a>
-
-<footer>© 2026 Sneaker Base. All Rights Reserved.</footer>
-
 <script>
+ 
+    var loading     = false;
     var totalLoaded = parseInt("{{ products|length }}") || 12;
-    var loading = false;
-  
+     
+    // ── Build card with all fake signals ────────────────────────────
     function createCard(item) {
-      var card = document.createElement("div");
-      card.className = "product-card";
-      card.onclick = function() { goToProduct(item.id); };
-      card.innerHTML =
-        '<span class="card-badge">-' + item.discount_pct + '%</span>' +
-        '<button class="fav-btn" onclick="event.stopPropagation();toggleFav(this)">' +
-          '<i class="fa fa-heart"></i>' +
-        '</button>' +
-        '<div class="card-img-wrap">' +
-          '<img src="' + item.image + '" alt="' + item.name + '" loading="lazy">' +
-        '</div>' +
-        '<div class="card-body">' +
-          '<div class="card-brand">' + item.brand + '</div>' +
-          '<div class="card-name">' + item.name + '</div>' +
-          '<div class="card-price-row">' +
-            '<span class="card-price">' + item.display_price + '</span>' +
-            '<span class="card-orig">' + item.original_price + '</span>' +
-            '<span class="card-discount">' + item.discount_pct + '% OFF</span>' +
-          '</div>' +
-          '<div class="stock-row">' +
-            '<span class="stock-dot"></span>' +
-            '<span class="stock-text">Only ' + item.stock_left + ' left!</span>' +
-          '</div>' +
-          '<button class="add-btn">Add To Cart</button>' +
-        '</div>';
-      return card;
+        var outer      = document.createElement("div");
+        outer.className = "product";
+     
+        // FAKE SIGNAL 3: SALE badge
+        var badge           = document.createElement("span");
+        badge.className     = "sale-badge";
+        badge.textContent   = "Sale";
+     
+        // Heart button
+        var fav         = document.createElement("button");
+        fav.className   = "fav-btn";
+        fav.innerHTML   = '<i class="fa fa-heart"></i>';
+        fav.onclick     = function() {
+            toggleHeart(fav, item.name, item.display_price, item.image);
+        };
+     
+        // Link
+        var link        = document.createElement("a");
+        link.href       = "/product/" + item.id;
+        link.style.cssText = "text-decoration:none;color:inherit;";
+     
+        var img         = document.createElement("img");
+        img.src         = item.image;
+        img.className   = "shoe-img";
+     
+        var h3          = document.createElement("h3");
+        h3.textContent  = item.name;
+     
+        link.appendChild(img);
+        link.appendChild(h3);
+     
+        // FAKE SIGNAL 5: price ends in .99
+        var price           = document.createElement("p");
+        price.textContent   = item.display_price + ".99";
+     
+        // FAKE SIGNAL 4: stock count
+        var stock           = document.createElement("p");
+        stock.className     = "stock-text";
+        stock.textContent   = "Only " + item.stock_left + " left!";
+     
+        // Button
+        var btn             = document.createElement("button");
+        btn.textContent     = "Add To Cart";
+        btn.onclick         = function() { directAddToCart(item.name); };
+     
+        outer.appendChild(badge);
+        outer.appendChild(fav);
+        outer.appendChild(link);
+        outer.appendChild(price);
+        outer.appendChild(stock);
+        outer.appendChild(btn);
+     
+        return outer;
     }
-  
-    function addSkeletons(n) {
-      var grid = document.getElementById("product-grid");
-      var skels = [];
-      for (var i = 0; i < n; i++) {
-        var s = document.createElement("div");
-        s.className = "skeleton";
-        s.innerHTML =
-          '<div class="skel-img"></div>' +
-          '<div class="skel-body">' +
-            '<div class="skel-line short"></div>' +
-            '<div class="skel-line"></div>' +
-            '<div class="skel-line short"></div>' +
-          '</div>';
-        grid.appendChild(s);
-        skels.push(s);
-      }
-      return skels;
+     
+    // ── Skeletons ───────────────────────────────────────────────────
+    function showSkeletons(n) {
+        var grid  = document.getElementById("product-grid");
+        var skels = [];
+        for (var i = 0; i < n; i++) {
+            var s       = document.createElement("div");
+            s.className = "product skeleton";
+            s.innerHTML =
+                '<div class="skel-img"></div>' +
+                '<div class="skel-line"></div>' +
+                '<div class="skel-line short"></div>' +
+                '<div class="skel-line"></div>';
+            grid.appendChild(s);
+            skels.push(s);
+        }
+        return skels;
     }
-  
+     
+    // ── Load more fake sneakers ─────────────────────────────────────
     function loadMore() {
-      if (loading) return;
-      loading = true;
-      var skels = addSkeletons(12);
-  
-      fetch("/api/bot/more-sneakers?count=12")
+    if (loading) return;
+    loading = true;
+
+    var btn = document.getElementById("load-more-btn");
+    if (btn) { btn.textContent = "Loading..."; btn.style.opacity = "0.7"; btn.style.cursor = "default"; }
+
+    var skels = showSkeletons(12);
+
+    fetch("/api/fake_sneakers?count=12")
+        .then(function(res) {
+            if (!res.ok) throw new Error("API error " + res.status);
+            return res.json();
+        })
+        .then(function(data) {
+            skels.forEach(function(s) { s.remove(); });
+            var grid = document.getElementById("product-grid");
+            data.forEach(function(item) {
+                grid.appendChild(createCard(item));
+            });
+            totalLoaded += data.length;
+            if (btn) { btn.textContent = "Load More"; btn.style.opacity = "1"; btn.style.cursor = "pointer"; }
+            loading = false;
+        })
+        .catch(function(err) {
+            console.error("Load more failed:", err);
+            skels.forEach(function(s) { s.remove(); });
+            // Don't reset loading on error — stops infinite retry
+            if (btn) { btn.textContent = "Try Again"; btn.style.opacity = "1"; btn.style.cursor = "pointer"; }
+            loading = false;
+        });
+
+}
+    // ── Infinite scroll ─────────────────────────────────────────────
+    var observer = new IntersectionObserver(function(entries) {
+        if (entries[0].isIntersecting) { loadMore(); }
+    }, { rootMargin: "300px" });
+     
+    observer.observe(document.getElementById("scroll-sentinel"));
+     
+    // ── Wishlist ────────────────────────────────────────────────────
+    function toggleHeart(btn, name, price, image) {
+        btn.classList.toggle("active");
+        btn.querySelector("i").style.color =
+            btn.classList.contains("active") ? "red" : "#ccc";
+        fetch("/api/toggle_wishlist", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({ name: name, price: price, image: image })
+        }).catch(function() {});
+    }
+     
+    // ── Add to cart ─────────────────────────────────────────────────
+    function directAddToCart(name) {
+        fetch("/add_to_cart", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({ name: name, price: "0" })
+        })
         .then(function(res) { return res.json(); })
         .then(function(data) {
-          skels.forEach(function(s) { s.remove(); });
-          var grid = document.getElementById("product-grid");
-          data.products.forEach(function(item) {
-            grid.appendChild(createCard(item));
-          });
-          totalLoaded += data.products.length;
-          loading = false;
-        })
-        .catch(function() {
-          skels.forEach(function(s) { s.remove(); });
-          loading = false;
-        });
+            var cart = document.getElementById("cart-count");
+            if (cart) {
+                cart.style.display = "inline";
+                cart.innerText     = data.count;
+            }
+        }).catch(function() {});
     }
-  
-    var observer = new IntersectionObserver(function(entries) {
-      if (entries[0].isIntersecting) loadMore();
-    }, { rootMargin: "400px" });
-  
-    observer.observe(document.getElementById("loader"));
-  
-    function toggleFav(btn) {
-      btn.classList.toggle("active");
-      btn.querySelector("i").style.color =
-        btn.classList.contains("active") ? "#ff3b3b" : "#ccc";
-    }
-  
-    function filterBy(btn, brand) {
-      document.querySelectorAll(".filter-btn").forEach(function(b) {
-        b.classList.remove("active");
-      });
-      btn.classList.add("active");
-      loadMore();
-    }
-  
-    function goToProduct(id) {
-      window.location.href = "/product/" + id;
-    }
-  </script>
-
-</body>
-</html>
+     
+    </script>
+     
+    </body>
+    </html>
+ 

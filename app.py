@@ -357,16 +357,16 @@ def products():
 # ── Infinite fake products page ───────────────────────────────────
 @app.route("/products/exclusive")
 def fake_products():
+    first_batch = generate_fake_sneakers(12)
     return render_template("bot_trap_products.html",
+                           products=first_batch,
                            cart_count=len(session.get("cart", [])))
-
 
 # ── JSON API for infinite scroll fake data ────────────────────────
 @app.route("/api/fake_sneakers")
 def api_fake_sneakers():
-    count = min(int(request.args.get("count", 24)), 48)
+    count = min(int(request.args.get("count", 12)), 48)
     return jsonify(generate_fake_sneakers(count))
-
 
 @app.route("/product/<int:product_id>")
 def product_page(product_id):
@@ -376,22 +376,59 @@ def product_page(product_id):
     blocked = state.get("blocked", False) or is_blocked(ip)
 
     product = next((s for s in SNEAKER_DB if s["id"] == product_id), None)
+
+    # Fake ID (1000-9999) from bot trap page — generate product on the fly
     if not product:
+        if flagged or blocked:
+            brand      = random.choice(BRANDS)
+            model      = random.choice(BRAND_MODELS[brand])
+            img_n      = random.randint(1, BRAND_IMAGE_COUNT[brand])
+            folder     = brand.lower().replace(" ", "")
+            orig_price = random.randint(6500, 22000)
+            fake_price = int(orig_price * random.uniform(0.45, 0.65))
+            product = {
+                "id":             product_id,
+                "brand":          brand,
+                "name":           f"{brand} {model}",
+                "price":          fake_price,
+                "display_price":  f"₹{fake_price:,}",
+                "original_price": f"₹{orig_price:,}",
+                "discount_pct":   random.randint(30, 55),
+                "stock_left":     random.randint(1, 3),
+                "image": f"/static/assets/images/{folder}/{folder}{img_n}.jpg",
+            }
+            append_trap_log({
+                "event":      "fake_product_page_served",
+                "ip":         ip,
+                "product_id": product_id,
+                "score":      state.get("score", 0),
+                "ts":         datetime.utcnow().isoformat(),
+            })
+            return render_template("trap_product.html",
+                                   product=product,
+                                   original_price=product["original_price"],
+                                   discount_pct=product["discount_pct"],
+                                   stock_left=product["stock_left"]), 200
+        # Real user hitting a non-existent ID
         return "Product not found", 404
 
+    # Real product exists — bot gets trap version, human gets real
     if flagged or blocked:
         fp = fake_product(product)
         append_trap_log({
-            "event": "trap_page_served",
-            "ip": ip, "product_id": product_id,
-            "score": state.get("score", 0),
-            "ts": datetime.utcnow().isoformat(),
+            "event":      "trap_page_served",
+            "ip":         ip,
+            "product_id": product_id,
+            "score":      state.get("score", 0),
+            "ts":         datetime.utcnow().isoformat(),
         })
-        return render_template("trap_product.html", product=fp,
+        return render_template("trap_product.html",
+                               product=fp,
                                original_price=fp["original_price"],
                                discount_pct=fp["discount_pct"],
                                stock_left=fp["stock_left"]), 200
 
+    # Clean human — show real product
     recommended = random.sample(SNEAKER_DB, 4)
     if "recent" not in session:
         session["recent"] = []
@@ -557,8 +594,11 @@ def add_to_cart():
         session["cart"] = []
     session["cart"].append(data)
     session.modified = True
-    return jsonify({"count": len(session["cart"]), "message": "Item added!"})
-
+    return jsonify({
+        "count":   len(session["cart"]),
+        "message": "Item added!",
+        "success": True
+    })
 
 @app.route("/api/toggle_wishlist", methods=["POST"])
 def toggle_wishlist():
@@ -608,6 +648,12 @@ def soc_dashboard():
 @app.route("/health")
 def health():
     return {"status": "ok", "redis": REDIS_OK}
+
+@app.route("/clear_cart", methods=["POST"])
+def clear_cart():
+    session.pop("cart", None)
+    session.modified = True
+    return redirect(url_for("view_cart"))
 
 
 if __name__ == "__main__":

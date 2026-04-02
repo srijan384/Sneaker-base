@@ -15,7 +15,30 @@ justify-content:center;
 gap:20px;
 padding:20px;
 }
-
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: black;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transform: translateY(120px);
+    opacity: 0;
+    transition: all 0.35s ease;
+    z-index: 9999;
+    min-width: 280px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-text { display: flex; flex-direction: column; gap: 3px; }
+.toast-title { font-size: 13px; color: #aaa; font-weight: 400; }
+.toast-name  { font-size: 15px; font-weight: 700; }
 .product{
 background:white;
 padding:20px;
@@ -258,28 +281,43 @@ body:JSON.stringify({name:name,price:price,image:image})
 }
 
 
-function directAddToCart(name){
-fetch("/add_to_cart",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({name:name,price:"0"})
-})
-.then(res=>res.json())
-.then(data=>{
-let cart=document.getElementById("cart-count")
-if(cart){ cart.innerText=data.count }
-else{
-let icon=document.querySelector(".fa-shopping-cart")
-let span=document.createElement("span")
-span.id="cart-count"
-span.style="background:black;color:white;border-radius:50%;padding:2px 6px;font-size:12px;vertical-align:top;"
-span.innerText=data.count
-icon.parentElement.appendChild(span)
+function showToast(name) {
+    document.getElementById("toast-name").textContent = name;
+    var toast = document.getElementById("cart-toast");
+    toast.classList.add("show");
+    setTimeout(function() { toast.classList.remove("show"); }, 3000);
 }
-})
+
+function directAddToCart(name) {
+    fetch("/add_to_cart", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ name: name, price: "0" })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        var cart = document.getElementById("cart-count");
+        if (cart) {
+            cart.innerText = data.count;
+        } else {
+            var icon = document.querySelector(".fa-shopping-cart");
+            var span = document.createElement("span");
+            span.id    = "cart-count";
+            span.style = "background:black;color:white;border-radius:50%;padding:2px 6px;font-size:12px;vertical-align:top;";
+            span.innerText = data.count;
+            icon.parentElement.appendChild(span);
+        }
+        showToast(name);
+    });
 }
+
 
 </script>
-
+<div class="toast" id="cart-toast">
+   <div class="toast-text">
+       <span class="toast-title">✓ Added to cart</span>
+       <span class="toast-name" id="toast-name"></span>
+   </div>
+</div>
 </body>
 </html>

@@ -10,6 +10,43 @@
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
+        .toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: black;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    transform: translateY(120px);
+    opacity: 0;
+    transition: all 0.35s ease;
+    z-index: 9999;
+    min-width: 280px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-text { display: flex; flex-direction: column; gap: 3px; }
+.toast-title { font-size: 13px; color: #aaa; font-weight: 400; }
+.toast-name  { font-size: 15px; font-weight: 700; }
+.product-cart-btn {
+    margin-top: 10px;
+    padding: 10px;
+    background: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.product-cart-btn:hover { background: #333; }
         .fav-btn {
             position: absolute; top: 10px; right: 10px; background: white;
             border: none; border-radius: 50%; width: 35px; height: 35px;
@@ -103,83 +140,75 @@
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 <script>
-    // ── Shop Now: server already knows if this IP is a bot ──────
-    // bot_flagged is injected by Flask via Jinja
-  
-
-    function handleShopNow() {
-        window.location.href = '/products';
+    function showToast(name) {
+        document.getElementById("toast-name").textContent = name;
+        var toast = document.getElementById("cart-toast");
+        toast.classList.add("show");
+        setTimeout(function() { toast.classList.remove("show"); }, 3000);
     }
-
-    // If bot_detect.js gets a redirect response from server, update button
     
-
-    // ── Also: if client-side bot score crosses threshold, update ─
-    // bot_detect.js sends score to /api/bot_signal which returns
-    // { redirect: true } — intercept and reroute Shop Now
-    const _origFetch = window.fetch;
-    window.fetch = function(...args) {
-        return _origFetch.apply(this, args).then(res => {
-            // Clone so we can still return original response
-            const clone = res.clone();
-            if (typeof args[0] === 'string' && args[0].includes('/api/bot_signal')) {
-                clone.json().then(data => {
-                    if (data && data.flagged) {
-                        // Update the button target dynamically
-                        const btn = document.getElementById('shop-btn');
-                        if (btn) {
-                            btn.onclick = () => { window.location.href = '/products/exclusive'; };
-                        }
-                    }
-                }).catch(() => {});
+    function addToCartHome(name, price, image) {
+        fetch("/add_to_cart", {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({ name: name, price: price, image: image })
+        })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            // Update cart counter
+            var counter = document.getElementById("cart-count");
+            if (counter) {
+                counter.innerText = data.count;
+            } else {
+                var icon = document.querySelector(".fa-shopping-cart");
+                var span = document.createElement("span");
+                span.id    = "cart-count";
+                span.style = "background:black;color:white;border-radius:50%;padding:2px 6px;font-size:12px;vertical-align:top;";
+                span.innerText = data.count;
+                icon.parentElement.appendChild(span);
             }
-            return res;
-        });
-    };
-</script>
-
-<script>
-    function toggleHeart(btn, name, price, image) {
-        btn.classList.toggle("active");
-        let icon = btn.querySelector("i");
-        icon.style.color = btn.classList.contains("active") ? "red" : "#ccc";
-        fetch('/api/toggle_wishlist', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, price, image })
-        }).then(r => r.json()).then(d => console.log("Wishlist:", d.count))
-          .catch(e => console.error(e));
+            // Show toast
+            showToast(name);
+        })
+        .catch(function() { alert("Error adding to cart."); });
     }
-</script>
-
-<script>
-async function loadSneakers() {
-    try {
-        const res  = await fetch("/api/sneakers");
-        if (!res.ok) throw new Error("API " + res.status);
-        const data = await res.json();
-        const grid = document.getElementById("product-grid");
-        if (!grid) return;
-        grid.innerHTML = "";
-        data.forEach(shoe => {
-            grid.innerHTML += `
-            <div class="product">
-                <button class="fav-btn" onclick="toggleHeart(this,'${shoe.name}','${shoe.price}','${shoe.image}')">
-                    <i class="fa fa-heart"></i>
-                </button>
-                <a href="/products" style="text-decoration:none;color:inherit;">
-                    <img src="${shoe.image}">
-                    <h3>${shoe.name}</h3>
-                    <p>${shoe.price}</p>
-                </a>
-            </div>`;
-        });
-    } catch (err) {
-        const grid = document.getElementById("product-grid");
-        if (grid) grid.innerHTML = "<p style='color:red'>Failed to load sneakers.</p>";
+    
+    async function loadSneakers() {
+        try {
+            const res  = await fetch("/api/sneakers");
+            if (!res.ok) throw new Error("API " + res.status);
+            const data = await res.json();
+            const grid = document.getElementById("product-grid");
+            if (!grid) return;
+            grid.innerHTML = "";
+            data.forEach(function(shoe) {
+                var card = document.createElement("div");
+                card.className = "product";
+                card.innerHTML =
+                    '<button class="fav-btn" onclick="toggleHeart(this,\'' + shoe.name + '\',\'' + shoe.price + '\',\'' + shoe.image + '\')">' +
+                        '<i class="fa fa-heart"></i>' +
+                    '</button>' +
+                    '<a href="/product/' + shoe.id + '" style="text-decoration:none;color:inherit;">' +
+                        '<img src="' + shoe.image + '">' +
+                        '<h3>' + shoe.name + '</h3>' +
+                        '<p>' + shoe.price + '</p>' +
+                    '</a>' +
+                    '<button class="product-cart-btn" onclick="addToCartHome(\'' + shoe.name + '\',\'' + shoe.price + '\',\'' + shoe.image + '\')">Add to Cart</button>';
+                grid.appendChild(card);
+            });
+        } catch (err) {
+            var grid = document.getElementById("product-grid");
+            if (grid) grid.innerHTML = "<p style='color:red'>Failed to load sneakers.</p>";
+        }
     }
-}
-loadSneakers();
-</script>
+    
+    loadSneakers();
+    </script>
+<div class="toast" id="cart-toast">
+    <div class="toast-text">
+        <span class="toast-title">✓ Added to cart</span>
+        <span class="toast-name" id="toast-name"></span>
+    </div>
+</div>
 </body>
 </html>
