@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sneaker Base | Exclusive Drop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f5f5;
+      --accent: #e8ff00;
+      --muted: #888;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 48px;
+      border-bottom: 1px solid #1e1e1e;
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: 3px;
+      color: var(--white);
+    }
+
+    .nav-links a {
+      margin: 0 16px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* ── Badge ── */
+    .exclusive-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--black);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 14px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+
+    /* ── Product layout ── */
+    .product-container {
+      display: flex;
+      gap: 80px;
+      padding: 72px 96px;
+      align-items: flex-start;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ── Image side ── */
+    .product-image {
+      flex-shrink: 0;
+    }
+
+    .product-image img {
+      width: 460px;
+      border-radius: 16px;
+      background: #141414;
+      padding: 32px;
+      box-shadow: 0 0 80px rgba(232, 255, 0, 0.08);
+      transition: transform 0.4s ease;
+    }
+
+    .product-image img:hover {
+      transform: scale(1.04) rotate(-1deg);
+    }
+
+    /* ── Info side ── */
+    .product-info { flex: 1; }
+
+    .product-info h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 52px;
+      letter-spacing: 2px;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    .colourway {
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .price-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .price {
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .original-price {
+      font-size: 18px;
+      color: var(--muted);
+      text-decoration: line-through;
+    }
+
+    .discount-tag {
+      background: #ff3b3b;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+
+    /* ── Size grid ── */
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .size-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .size-btn {
+      padding: 13px 6px;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      color: var(--white);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      border-radius: 6px;
+      transition: 0.15s;
+    }
+
+    .size-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .size-btn.active { background: var(--accent); color: var(--black); border-color: var(--accent); }
+    .size-btn.sold-out { background: #0f0f0f; color: #333; cursor: not-allowed; text-decoration: line-through; }
+
+    /* ── CTA buttons ── */
+    .btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 15px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--black);
+    }
+
+    .btn-primary:hover { background: #d4e800; }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: var(--white);
+    }
+
+    .btn-secondary:hover { border-color: #555; }
+
+    /* ── Stock bar ── */
+    .stock-bar-wrap {
+      margin-bottom: 28px;
+    }
+
+    .stock-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .stock-bar {
+      height: 4px;
+      background: #1e1e1e;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .stock-fill {
+      height: 100%;
+      background: #ff3b3b;
+      width: 82%;
+      border-radius: 2px;
+      animation: fillUp 1.2s ease forwards;
+    }
+
+    @keyframes fillUp {
+      from { width: 0; }
+      to { width: 82%; }
+    }
+
+    /* ── Fake auth popup ── */
+    .auth-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-overlay.show { display: flex; }
+
+    .auth-box {
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 420px;
+      text-align: center;
+    }
+
+    .auth-box h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    .auth-box p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 32px;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      color: var(--white);
+      font-size: 14px;
+      margin-bottom: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .auth-input:focus { border-color: var(--accent); }
+
+    .auth-submit {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: var(--black);
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* ── Capture log (invisible to user) ── */
+    #bot-capture-log { display: none; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 32px;
+      color: #333;
+      font-size: 12px;
+      border-top: 1px solid #1a1a1a;
+      margin-top: 80px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hidden honeypot elements for bots -->
+<div id="bot-capture-log">
+  <input type="text" name="email" id="hp_email" autocomplete="off">
+  <input type="text" name="password" id="hp_password" autocomplete="off">
+  <a href="/trap/exclusive-access" id="hp_link">Exclusive API Access</a>
+  <a href="/admin/export-users">Admin Export</a>
+  <a href="/api/v1/all-products-dump">Full Product Dump</a>
+</div>
+
+<header class="header">
+  <div class="logo">Sneaker Base</div>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products">Shop</a>
+    <a href="/wishlist">Wishlist</a>
+    <a href="/cart">Cart</a>
+  </nav>
+</header>
+
+<div class="product-container">
+
+  <!-- Image -->
+  <div class="product-image">
+    <img src="{{ product.image }}" alt="{{ product.name }}" id="product-img">
+  </div>
+
+  <!-- Info -->
+  <div class="product-info">
+
+    <span class="exclusive-badge">⚡ Exclusive Drop</span>
+
+    <h1>{{ product.name }}</h1>
+    <p class="colourway">Limited Edition · Only {{ stock_left }} left</p>
+
+    <div class="price-row">
+      <span class="price">{{ product.display_price }}</span>
+      <span class="original-price">₹{{ original_price }}</span>
+      <span class="discount-tag">{{ discount_pct }}% OFF</span>
+    </div>
+
+    <!-- Stock bar -->
+    <div class="stock-bar-wrap">
+      <div class="stock-label">
+        <span>Stock availability</span>
+        <span style="color:#ff3b3b;">Almost gone!</span>
+      </div>
+      <div class="stock-bar"><div class="stock-fill"></div></div>
+    </div>
+
+    <!-- Sizes -->
+    <p class="section-label">Select Size</p>
+    <div class="size-grid">
+      <button class="size-btn" onclick="selectSize(this)">UK 6</button>
+      <button class="size-btn" onclick="selectSize(this)">UK 7</button>
+      <button class="size-btn sold-out">UK 8</button>
+      <button class="size-btn" onclick="selectSize(this)">UK 9</button>
+      <button class="size-btn" onclick="selectSize(this)">UK 10</button>
+      <button class="size-btn" onclick="selectSize(this)">UK 11</button>
+      <button class="size-btn sold-out">UK 12</button>
+    </div>
+
+    <!-- CTAs -->
+    <button class="btn btn-primary" onclick="triggerAuthTrap()">Add To Cart — Exclusive</button>
+    <button class="btn btn-secondary" onclick="triggerAuthTrap()">♡ Save to Wishlist</button>
+
+  </div>
+</div>
+
+<!-- Auth Trap Popup -->
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-box">
+    <h2>Members Only</h2>
+    <p>This exclusive drop requires verification. Enter your details to proceed.</p>
+    <input class="auth-input" type="text" id="trap_username" placeholder="Username or Email" autocomplete="off">
+    <input class="auth-input" type="password" id="trap_password" placeholder="Password" autocomplete="off">
+    <button class="auth-submit" onclick="submitTrap()">Verify & Continue</button>
+  </div>
+</div>
+
+<footer>© 2026 Sneaker Base. All Rights Reserved.</footer>
+
+<script>
+  let selectedSize = null;
+
+  function selectSize(btn) {
+    document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    selectedSize = btn.textContent;
+    captureBotAction("size_selected", { size: selectedSize });
+  }
+
+  function triggerAuthTrap() {
+    captureBotAction("cta_clicked", { size: selectedSize });
+    document.getElementById("authOverlay").classList.add("show");
+  }
+
+  function submitTrap() {
+    const email = document.getElementById("trap_username").value;
+    const password = document.getElementById("trap_password").value;
+    captureBotAction("credentials_submitted", { email, password });
+
+    // Send to backend
+    fetch("/api/bot_trap_capture", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "credential_harvest_attempt",
+        email, password,
+        page: window.location.pathname,
+        ts: Date.now()
+      })
+    }).catch(() => {});
+
+    // Show fake processing to keep bot engaged longer
+    const btn = document.querySelector(".auth-submit");
+    btn.textContent = "Verifying...";
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = "Processing...";
+      setTimeout(() => {
+        btn.textContent = "Please wait — securing session...";
+      }, 2000);
+    }, 1500);
+  }
+
+  function captureBotAction(action, data) {
+    fetch("/api/bot_trap_capture", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action, data,
+        page: window.location.pathname,
+        ts: Date.now()
+      })
+    }).catch(() => {});
+  }
+
+  // Auto-log honeypot link clicks
+  document.querySelectorAll("#bot-capture-log a").forEach(link => {
+    link.addEventListener("click", e => {
+      e.preventDefault();
+      captureBotAction("honeypot_link_clicked", { href: link.href });
+    });
+  });
+
+  // Monitor honeypot fields
+  ["hp_email", "hp_password"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("input", () => {
+        captureBotAction("honeypot_field_filled", { field: id, value: el.value });
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

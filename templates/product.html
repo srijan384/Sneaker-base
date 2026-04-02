@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
@@ -10,214 +9,82 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <style>
-
-body{
-font-family:Arial;
-background:#f6f6f6;
-margin:0;
-}
-
-/* header */
+body{ font-family:Arial; background:#f6f6f6; margin:0; }
 
 .header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 40px;
-background:white;
-box-shadow:0 2px 6px rgba(0,0,0,0.1);
+display:flex; justify-content:space-between; align-items:center;
+padding:15px 40px; background:white; box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
-
-.logo img{
-height:50px;
-}
-
-.nav-links a{
-margin:0 15px;
-text-decoration:none;
-color:black;
-font-weight:600;
-}
-
-/* layout */
+.logo img{ height:50px; }
+.nav-links a{ margin:0 15px; text-decoration:none; color:black; font-weight:600; }
 
 .product-container{
-display:flex;
-gap:80px;
-padding:80px;
-align-items:flex-start;
+display:flex; gap:80px; padding:80px; align-items:flex-start;
 }
-
 .product-image img{
-width:450px;
-background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 4px 15px rgba(0,0,0,0.1);
-transition:transform 0.3s;
+width:450px; background:white; padding:30px; border-radius:10px;
+box-shadow:0 4px 15px rgba(0,0,0,0.1); transition:transform 0.3s;
 }
+.product-image img:hover{ transform:scale(1.1); }
 
-.product-image img:hover{
-transform:scale(1.1);
-}
+.product-info{ max-width:400px; }
+.product-info h1{ font-size:30px; margin-bottom:10px; }
+.price{ font-size:24px; margin-bottom:30px; }
 
-.product-info{
-max-width:400px;
-}
+.size-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:15px; }
+.size-btn{ padding:12px; border:1px solid #ddd; background:white; cursor:pointer; font-weight:600; }
+.size-btn:hover{ border:1px solid black; }
+.size-btn.active{ background:black; color:white; border:1px solid black; }
+.size-btn.disabled{ background:#eee; color:#999; cursor:not-allowed; }
 
-.product-info h1{
-font-size:30px;
-margin-bottom:10px;
-}
-
-.price{
-font-size:24px;
-margin-bottom:30px;
-}
-
-/* sizes */
-
-.size-grid{
-display:grid;
-grid-template-columns:repeat(5,1fr);
-gap:10px;
-margin-bottom:15px;
-}
-
-.size-btn{
-padding:12px;
-border:1px solid #ddd;
-background:white;
-cursor:pointer;
-font-weight:600;
-}
-
-.size-btn:hover{
-border:1px solid black;
-}
-
-.size-btn.active{
-background:black;
-color:white;
-border:1px solid black;
-}
-
-.size-btn.disabled{
-background:#eee;
-color:#999;
-cursor:not-allowed;
-}
-
-/* buttons */
-
-.btn{
-width:100%;
-padding:14px;
-border:none;
-cursor:pointer;
-margin-bottom:10px;
-font-weight:bold;
-}
-
-.cart-btn{
-background:black;
-color:white;
-}
-
-.wishlist-btn{
-background:white;
-border:1px solid black;
-}
-
-/* size chart modal */
+.btn{ width:100%; padding:14px; border:none; cursor:pointer; margin-bottom:10px; font-weight:bold; }
+.cart-btn{ background:black; color:white; }
+.wishlist-btn{ background:white; border:1px solid black; }
 
 .size-modal{
-display:none;
-position:fixed;
-z-index:1000;
-left:0;
-top:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
+display:none; position:fixed; z-index:1000; left:0; top:0;
+width:100%; height:100%; background:rgba(0,0,0,0.5);
 }
-
 .size-modal-content{
-background:white;
-padding:30px;
-width:420px;
-margin:120px auto;
-border-radius:10px;
-text-align:center;
+background:white; padding:30px; width:420px;
+margin:120px auto; border-radius:10px; text-align:center;
 }
+.size-modal table{ width:100%; border-collapse:collapse; margin-top:20px; }
+.size-modal th, .size-modal td{ border:1px solid #ddd; padding:10px; }
+.close{ float:right; cursor:pointer; font-size:22px; }
 
-.size-modal table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-}
-
-.size-modal th,
-.size-modal td{
-border:1px solid #ddd;
-padding:10px;
-}
-
-.close{
-float:right;
-cursor:pointer;
-font-size:22px;
-}
-
-/* product grids */
-
-.product-grid{
-display:flex;
-flex-wrap:wrap;
-gap:20px;
-justify-content:center;
-}
-
+.product-grid{ display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
 .product{
-background:white;
-padding:20px;
-border-radius:10px;
-width:220px;
-text-align:center;
-box-shadow:0 3px 10px rgba(0,0,0,0.1);
+background:white; padding:20px; border-radius:10px;
+width:220px; text-align:center; box-shadow:0 3px 10px rgba(0,0,0,0.1);
 }
-
-.product img{
-width:100%;
-height:160px;
-object-fit:contain;
-}
-
+.product img{ width:100%; height:160px; object-fit:contain; }
 </style>
 
 </head>
-
-
 <body>
 
+<!-- ══ BOT DETECTION SCRIPT ══ -->
+<script src="{{ url_for('static', filename='js/bot_detect.js') }}"></script>
+
+<!-- Honeytrap links — bots follow these, humans never see them -->
+<a href="/trap/exclusive-access"
+   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
+   tabindex="-1" aria-hidden="true">exclusive</a>
+<a href="/api/v1/priority-access"
+   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
+   tabindex="-1" aria-hidden="true">priority-api</a>
 
 <header class="header">
-
-<div class="logo">
-<img src="/static/assets/images/logo.png">
-</div>
-
+<div class="logo"><img src="/static/assets/images/logo.png"></div>
 <nav class="nav-links">
 <a href="/">Home</a>
 <a href="/products">Shop</a>
 <a href="/wishlist">Wishlist</a>
 <a href="/cart">Cart</a>
 </nav>
-
 </header>
 
-
-<!-- PRODUCT SECTION -->
 
 <div class="product-container">
 
@@ -228,24 +95,19 @@ object-fit:contain;
 <div class="product-info">
 
 <h1>{{ product.name }}</h1>
-
 <div class="price">{{ product.display_price }}</div>
 
 <h3>Select Size</h3>
 
 <div class="size-grid">
-
 <button class="size-btn" onclick="selectSize(this)">UK 6</button>
 <button class="size-btn" onclick="selectSize(this)">UK 7</button>
 <button class="size-btn disabled">UK 8 (Out)</button>
 <button class="size-btn" onclick="selectSize(this)">UK 9</button>
 <button class="size-btn" onclick="selectSize(this)">UK 10</button>
-
 </div>
 
-<p>
-<a href="#" onclick="openSizeChart()">Size Guide</a>
-</p>
+<p><a href="#" onclick="openSizeChart()">Size Guide</a></p>
 
 <button class="btn cart-btn"
 onclick="addToCart('{{ product.name }}','{{ product.display_price }}','{{ product.image }}')">
@@ -258,186 +120,93 @@ Add To Wishlist
 </button>
 
 </div>
-
 </div>
 
 
-<!-- RECOMMENDED SNEAKERS -->
-
 <section style="padding:60px">
-
 <h2>You May Also Like</h2>
-
 <div class="product-grid">
-
 {% for item in recommended %}
-
 <div class="product">
-
 <a href="/product/{{ item.id }}">
-
 <img src="{{ item.image }}">
 <h3>{{ item.name }}</h3>
 <p>{{ item.display_price }}</p>
-
 </a>
-
 </div>
-
 {% endfor %}
-
 </div>
-
 </section>
 
-
-<!-- RECENTLY VIEWED -->
 
 <section style="padding:60px">
-
 <h2>Recently Viewed</h2>
-
 <div class="product-grid">
-
 {% for item in recent %}
-
 <div class="product">
-
 <a href="/product/{{ item.id }}">
-
 <img src="{{ item.image }}">
 <h3>{{ item.name }}</h3>
 <p>{{ item.display_price }}</p>
-
 </a>
-
 </div>
-
 {% endfor %}
-
 </div>
-
 </section>
 
-
-<!-- SIZE CHART -->
 
 <div id="sizeChartModal" class="size-modal">
-
 <div class="size-modal-content">
-
 <span class="close" onclick="closeSizeChart()">×</span>
-
 <h2>Shoe Size Chart</h2>
-
 <table>
-
-<tr>
-<th>UK</th>
-<th>US</th>
-<th>EU</th>
-<th>CM</th>
-</tr>
-
+<tr><th>UK</th><th>US</th><th>EU</th><th>CM</th></tr>
 <tr><td>6</td><td>7</td><td>40</td><td>25</td></tr>
 <tr><td>7</td><td>8</td><td>41</td><td>26</td></tr>
 <tr><td>8</td><td>9</td><td>42</td><td>27</td></tr>
 <tr><td>9</td><td>10</td><td>43</td><td>28</td></tr>
 <tr><td>10</td><td>11</td><td>44</td><td>29</td></tr>
-
 </table>
-
 </div>
-
 </div>
 
 
 <script>
-
 let selectedSize = null
 
 function selectSize(btn){
-
-let buttons = document.querySelectorAll(".size-btn")
-
-buttons.forEach(b => b.classList.remove("active"))
-
+document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"))
 btn.classList.add("active")
-
 selectedSize = btn.innerText
-
 }
 
 function addToCart(name,price,image){
-
-if(!selectedSize){
-alert("Please select a size first")
-return
-}
-
+if(!selectedSize){ alert("Please select a size first"); return }
 fetch("/add_to_cart",{
-
 method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-name:name,
-price:price,
-image:image,
-size:selectedSize
-})
-
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name:name,price:price,image:image,size:selectedSize})
 })
 .then(res=>res.json())
 .then(data=>{
-
 alert("Added to cart")
-
 let cartCounter=document.getElementById("cart-count")
-
-if(cartCounter){
-cartCounter.innerText=data.count
-}
-
+if(cartCounter){ cartCounter.innerText=data.count }
 })
-
 }
 
 function addWishlist(name,price,image){
-
 fetch("/api/toggle_wishlist",{
-
 method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-name:name,
-price:price,
-image:image
-})
-
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name:name,price:price,image:image})
 })
 .then(res=>res.json())
-.then(data=>{
-alert("Added to wishlist")
-})
-
+.then(data=>{ alert("Added to wishlist") })
 }
 
-function openSizeChart(){
-document.getElementById("sizeChartModal").style.display="block"
-}
-
-function closeSizeChart(){
-document.getElementById("sizeChartModal").style.display="none"
-}
-
+function openSizeChart(){ document.getElementById("sizeChartModal").style.display="block" }
+function closeSizeChart(){ document.getElementById("sizeChartModal").style.display="none" }
 </script>
 
 </body>

@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <style>
-
 .product-grid{
 display:flex;
 flex-wrap:wrap;
@@ -16,8 +15,6 @@ justify-content:center;
 gap:20px;
 padding:20px;
 }
-
-/* product card */
 
 .product{
 background:white;
@@ -35,8 +32,6 @@ transform:translateY(-8px);
 box-shadow:0 12px 28px rgba(0,0,0,0.12);
 }
 
-/* shoe image */
-
 .shoe-img{
 width:100%;
 height:180px;
@@ -46,8 +41,6 @@ padding:15px;
 border-radius:10px;
 }
 
-/* brand logo */
-
 .brand-logo{
 height:28px;
 width:auto;
@@ -55,8 +48,6 @@ object-fit:contain;
 margin-top:8px;
 margin-bottom:8px;
 }
-
-/* dropdown */
 
 .dropdown{
 position:relative;
@@ -87,8 +78,6 @@ text-align:left;
 display:block;
 }
 
-/* wishlist heart */
-
 .fav-btn{
 position:absolute;
 top:10px;
@@ -116,8 +105,6 @@ transition:0.2s;
 color:red;
 }
 
-/* buttons */
-
 .product button{
 margin-top:10px;
 padding:10px;
@@ -133,8 +120,6 @@ border-radius:5px;
 background:#333;
 }
 
-/* load more */
-
 .load-more-btn{
 display:inline-block;
 padding:14px 28px;
@@ -149,11 +134,21 @@ transition:0.2s;
 .load-more-btn:hover{
 background:#333;
 }
-
 </style>
 </head>
 
 <body>
+
+<!-- ══ BOT DETECTION SCRIPT ══ -->
+<script src="{{ url_for('static', filename='js/bot_detect.js') }}"></script>
+
+<!-- honeytrap links: invisible to real users, bots parse them -->
+<a href="/trap/exclusive-access"
+   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
+   tabindex="-1" aria-hidden="true">exclusive-access</a>
+<a href="/api/v1/all-products-dump"
+   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
+   tabindex="-1" aria-hidden="true">product-dump</a>
 
 <header class="header">
 
@@ -162,26 +157,19 @@ background:#333;
 </div>
 
 <nav class="nav-links">
-
 <a href="/">Home</a>
-
 <a href="/products?category=unisex">Unisex</a>
 <a href="/products?category=new">New In</a>
 
 <div class="dropdown">
-
 <a href="#" style="cursor:pointer;">Brands ▾</a>
-
 <div class="dropdown-content">
-
 <a href="/products?brand=Jordan">Air Jordan</a>
 <a href="/products?brand=Nike">Nike</a>
 <a href="/products?brand=Adidas">Adidas</a>
 <a href="/products?brand=Puma">Puma</a>
 <a href="/products">All Brands</a>
-
 </div>
-
 </div>
 
 </nav>
@@ -257,68 +245,38 @@ Load More
 <script>
 
 function toggleHeart(btn,name,price,image){
-
 btn.classList.toggle("active")
-
 let icon = btn.querySelector("i")
-
 icon.style.color = btn.classList.contains("active") ? "red" : "#ccc"
-
 fetch('/api/toggle_wishlist',{
 method:'POST',
 headers:{'Content-Type':'application/json'},
-body:JSON.stringify({
-name:name,
-price:price,
-image:image
-})
+body:JSON.stringify({name:name,price:price,image:image})
 })
 .then(response=>response.json())
-.then(data=>{
-console.log("Wishlist updated:",data)
-})
-
+.then(data=>{ console.log("Wishlist updated:",data) })
 }
 
 
 function directAddToCart(name){
-
 fetch("/add_to_cart",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-name:name,
-price:"0"
-})
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name:name,price:"0"})
 })
 .then(res=>res.json())
 .then(data=>{
-
 let cart=document.getElementById("cart-count")
-
-if(cart){
-cart.innerText=data.count
-}
+if(cart){ cart.innerText=data.count }
 else{
-
 let icon=document.querySelector(".fa-shopping-cart")
-
 let span=document.createElement("span")
-
 span.id="cart-count"
-
 span.style="background:black;color:white;border-radius:50%;padding:2px 6px;font-size:12px;vertical-align:top;"
-
 span.innerText=data.count
-
 icon.parentElement.appendChild(span)
-
 }
-
 })
-
 }
 
 </script>
