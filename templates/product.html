@@ -1,316 +1,483 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<title>{{ product.name }}</title>
-
+<title>{{ product.name }} | Sneaker Base</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
 <style>
-body{ font-family:Arial; background:#f6f6f6; margin:0; }
+body { background: #f7f6f4; font-family: 'Barlow', sans-serif; }
 
-.header{
-display:flex; justify-content:space-between; align-items:center;
-padding:15px 40px; background:white; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+.product-page {
+  max-width: 1200px;
+  margin: 48px auto;
+  padding: 0 48px;
+  display: flex;
+  gap: 72px;
+  align-items: flex-start;
 }
-.logo img{ height:50px; }
-.nav-links a{ margin:0 15px; text-decoration:none; color:black; font-weight:600; }
 
-.product-container{
-display:flex; gap:80px; padding:80px; align-items:flex-start;
+/* ─── LEFT: IMAGE ─── */
+.product-img-col {
+  flex: 1.3;
+  background: #fff;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  border: 1px solid #e0e0e0;
+  position: sticky;
+  top: 80px;
 }
-.product-image img{
-width:450px; background:white; padding:30px; border-radius:10px;
-box-shadow:0 4px 15px rgba(0,0,0,0.1); transition:transform 0.3s;
+.product-img-col img {
+  width: 100%;
+  max-width: 460px;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
 }
-/* ── Toast notification ── */
+.product-img-col:hover img { transform: scale(1.06) rotate(-1deg); }
+
+/* ─── RIGHT: INFO ─── */
+.product-info-col { flex: 1; }
+
+.brand-tag {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: #e85d2f; margin-bottom: 10px;
+}
+
+.product-info-col h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 42px; font-weight: 900;
+  text-transform: uppercase; line-height: 1.05;
+  letter-spacing: -0.5px; margin-bottom: 18px;
+  color: #0a0a0a;
+}
+
+.price-main {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 32px; font-weight: 800;
+  color: #0a0a0a; display: block; margin-bottom: 4px;
+}
+.tax-note { font-size: 12px; color: #888; margin-bottom: 32px; display: block; }
+
+/* Size */
+.size-label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: #444; margin-bottom: 12px;
+}
+
+.size-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.size-box {
+  border: 1.5px solid #e0e0e0;
+  padding: 12px 8px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 700;
+  transition: all 0.18s;
+  background: #fff;
+  user-select: none;
+}
+.size-box:hover:not(.out)  { border-color: #0a0a0a; }
+.size-box.selected { border-color: #0a0a0a; background: #0a0a0a; color: #fff; }
+.size-box.out {
+  background: #f4f4f4; color: #bbb;
+  cursor: not-allowed; text-decoration: line-through;
+}
+
+.size-guide-link {
+  font-size: 13px; color: #888;
+  text-decoration: underline; cursor: pointer;
+  display: inline-block; margin-bottom: 28px;
+}
+
+/* Shake animation for size warning */
+@keyframes shake {
+  0%,100%{ transform:translateX(0); }
+  20%{ transform:translateX(-6px); }
+  40%{ transform:translateX(6px); }
+  60%{ transform:translateX(-4px); }
+  80%{ transform:translateX(4px); }
+}
+.shake { animation: shake 0.4s ease; }
+
+.size-hint {
+  font-size: 12px; color: #e85d2f; font-weight: 600;
+  margin-bottom: 16px; display: none;
+}
+.size-hint.show { display: block; }
+
+/* Buttons */
+.btn-primary {
+  width: 100%; padding: 17px;
+  background: #0a0a0a; color: #fff;
+  border: none; border-radius: 50px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; cursor: pointer;
+  margin-bottom: 12px;
+  transition: background 0.2s, transform 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.btn-primary:hover { background: #e85d2f; transform: translateY(-2px); }
+
+.btn-secondary {
+  width: 100%; padding: 17px;
+  background: transparent; color: #0a0a0a;
+  border: 1.5px solid #e0e0e0; border-radius: 50px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; cursor: pointer;
+  margin-bottom: 32px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-secondary:hover { border-color: #0a0a0a; }
+.btn-secondary.active { border-color: #e53935; color: #e53935; }
+
+/* Description */
+.product-desc {
+  font-size: 15px; color: #666; line-height: 1.7;
+  border-top: 1px solid #e0e0e0; padding-top: 24px;
+}
+
+/* ─── SECTION (related/recent) ─── */
+.section-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 48px 60px;
+}
+.section-wrap h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 30px; font-weight: 800; text-transform: uppercase;
+  margin-bottom: 24px; color: #0a0a0a;
+}
+.rec-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.rec-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.rec-card:hover { transform: translateY(-5px); box-shadow: 0 12px 32px rgba(0,0,0,0.10); }
+.rec-card a { text-decoration: none; color: #0a0a0a; display: block; }
+.rec-card img { width: 100%; height: 170px; object-fit: contain; background: #f4f4f4; padding: 16px; }
+.rec-card-info { padding: 14px 16px 16px; }
+.rec-card h3 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px; font-weight: 700; text-transform: uppercase;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.rec-card p { font-size: 14px; font-weight: 600; color: #0a0a0a; }
+
+/* ─── SIZE MODAL ─── */
+.size-modal {
+  display: none;
+  position: fixed; z-index: 1000; inset: 0;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
+}
+.size-modal-content {
+  background: #fff; padding: 36px; width: 440px;
+  margin: 100px auto; border-radius: 18px; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.size-modal h2 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 24px; font-weight: 800; text-transform: uppercase; margin-bottom: 20px;
+}
+.size-modal table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+.size-modal th, .size-modal td { border: 1px solid #e0e0e0; padding: 10px 14px; }
+.size-modal th { background: #0a0a0a; color: #fff; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.modal-close { float: right; cursor: pointer; font-size: 24px; color: #888; line-height: 1; }
+.modal-close:hover { color: #0a0a0a; }
+
+/* ─── TOAST ─── */
 .toast {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: black;
-    color: white;
-    padding: 16px 24px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    transform: translateY(120px);
-    opacity: 0;
-    transition: all 0.35s ease;
-    z-index: 9999;
-    min-width: 280px;
+  position: fixed; bottom: 32px; right: 32px;
+  background: #0a0a0a; color: #fff;
+  padding: 16px 22px; border-radius: 12px;
+  font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.28);
+  transform: translateY(120px); opacity: 0;
+  transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  z-index: 9999; min-width: 240px;
+  border-left: 3px solid #e85d2f;
 }
 .toast.show { transform: translateY(0); opacity: 1; }
-.toast img  { width: 48px; height: 48px; object-fit: contain; border-radius: 6px; background: #222; }
-.toast-text { display: flex; flex-direction: column; gap: 3px; }
-.toast-title { font-size: 13px; color: #aaa; font-weight: 400; }
-.toast-name  { font-size: 15px; font-weight: 700; }
-.product-image img:hover{ transform:scale(1.1); }
+.toast img { width: 44px; height: 44px; object-fit: contain; border-radius: 6px; background: #1a1a1a; }
+.toast-text { display: flex; flex-direction: column; gap: 2px; }
+.toast-title { font-size: 12px; color: #e85d2f; font-weight: 700; }
+.toast-name  { font-size: 14px; font-weight: 700; }
 
-.product-info{ max-width:400px; }
-.product-info h1{ font-size:30px; margin-bottom:10px; }
-.price{ font-size:24px; margin-bottom:30px; }
-
-.size-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:15px; }
-.size-btn{ padding:12px; border:1px solid #ddd; background:white; cursor:pointer; font-weight:600; }
-.size-btn:hover{ border:1px solid black; }
-.size-btn.active{ background:black; color:white; border:1px solid black; }
-.size-btn.disabled{ background:#eee; color:#999; cursor:not-allowed; }
-
-.btn{ width:100%; padding:14px; border:none; cursor:pointer; margin-bottom:10px; font-weight:bold; }
-.cart-btn{ background:black; color:white; }
-.wishlist-btn{ background:white; border:1px solid black; }
-
-.size-modal{
-display:none; position:fixed; z-index:1000; left:0; top:0;
-width:100%; height:100%; background:rgba(0,0,0,0.5);
+@media(max-width:900px) {
+  .product-page { flex-direction: column; padding: 20px; gap: 28px; }
+  .product-img-col { position: static; }
+  .rec-grid { grid-template-columns: repeat(2,1fr); }
+  .section-wrap { padding: 20px; }
 }
-
-.size-modal-content{
-background:white; padding:30px; width:420px;
-margin:120px auto; border-radius:10px; text-align:center;
-}
-.size-modal table{ width:100%; border-collapse:collapse; margin-top:20px; }
-.size-modal th, .size-modal td{ border:1px solid #ddd; padding:10px; }
-.close{ float:right; cursor:pointer; font-size:22px; }
-
-.toast {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: black;
-    color: white;
-    padding: 16px 24px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    transform: translateY(120px);
-    opacity: 0;
-    transition: all 0.35s ease;
-    z-index: 9999;
-    min-width: 280px;
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-.toast-text { display: flex; flex-direction: column; gap: 3px; }
-.toast-title { font-size: 13px; color: #aaa; font-weight: 400; }
-.toast-name  { font-size: 15px; font-weight: 700; }
-.product-cart-btn {
-    margin-top: 10px;
-    padding: 10px;
-    background: black;
-    color: white;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: 600;
-}
-.product-cart-btn:hover { background: #333; }
-.product-grid{ display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
-.product{
-background:white; padding:20px; border-radius:10px;
-width:220px; text-align:center; box-shadow:0 3px 10px rgba(0,0,0,0.1);
-}
-.product img{ width:100%; height:160px; object-fit:contain; }
 </style>
-
 </head>
 <body>
 
-<!-- ══ BOT DETECTION SCRIPT ══ -->
 <script src="{{ url_for('static', filename='js/bot_detect.js') }}"></script>
-
-<!-- Honeytrap links — bots follow these, humans never see them -->
-<a href="/trap/exclusive-access"
-   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
-   tabindex="-1" aria-hidden="true">exclusive</a>
-<a href="/api/v1/priority-access"
-   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
-   tabindex="-1" aria-hidden="true">priority-api</a>
+<a href="/trap/exclusive-access" style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;" tabindex="-1" aria-hidden="true">exclusive</a>
+<a href="/api/v1/priority-access"  style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;" tabindex="-1" aria-hidden="true">priority-api</a>
 
 <header class="header">
-<div class="logo"><img src="/static/assets/images/logo.png"></div>
-<nav class="nav-links">
-<a href="/">Home</a>
-<a href="/products">Shop</a>
-<a href="/wishlist">Wishlist</a>
-<a href="/cart">Cart</a>
-</nav>
+  <div class="logo"><img src="/static/assets/images/logo.png" alt="Sneaker Base"></div>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products">Shop</a>
+    <a href="/wishlist">Wishlist</a>
+    <a href="/cart">Cart</a>
+  </nav>
+  <div class="icons">
+    <a href="/wishlist"><i class="fa fa-heart-o fa-lg"></i></a>
+    <a href="/cart">
+      <i class="fa fa-shopping-cart fa-lg"></i>
+      {% if cart_count and cart_count > 0 %}
+      <span id="cart-count" style="background:black;color:white;border-radius:50%;padding:2px 6px;font-size:12px;vertical-align:top;">{{ cart_count }}</span>
+      {% endif %}
+    </a>
+  </div>
 </header>
 
+<div class="product-page">
+  <!-- IMAGE -->
+  <div class="product-img-col">
+    <img src="{{ product.image }}" alt="{{ product.name }}">
+  </div>
 
-<div class="product-container">
+  <!-- INFO -->
+  <div class="product-info-col">
+    <span class="brand-tag">{{ product.brand }}</span>
+    <h1>{{ product.name }}</h1>
+    <span class="price-main">{{ product.display_price }}</span>
+    <span class="tax-note">incl. of all taxes</span>
 
-<div class="product-image">
-<img src="{{ product.image }}">
+    <span class="size-label">Select Size</span>
+    <div class="size-grid" id="size-grid">
+      <div class="size-box" onclick="selectSize(this)">UK 6</div>
+      <div class="size-box" onclick="selectSize(this)">UK 7</div>
+      <div class="size-box out">UK 8</div>
+      <div class="size-box" onclick="selectSize(this)">UK 9</div>
+      <div class="size-box" onclick="selectSize(this)">UK 10</div>
+    </div>
+    <p id="size-hint" class="size-hint">Please select a size to continue</p>
+    <span class="size-guide-link" onclick="openSizeChart()">Size Guide →</span>
+
+    <!-- ADD TO BAG — no alert, toast only -->
+    <button class="btn-primary" onclick="addToCart()">
+      <i class="fa fa-shopping-bag"></i> Add to Bag
+    </button>
+
+    <button class="btn-secondary" id="favBtn"
+      onclick="toggleFavorite(this,'{{ product.name }}','{{ product.display_price }}','{{ product.image }}','{{ product.id }}')">
+      <i class="fa fa-heart-o"></i> Add to Wishlist
+    </button>
+
+    <p class="product-desc">
+      {{ product.description if product.description else 'Premium quality sneaker crafted for both performance and style. Featuring advanced cushioning technology and durable materials for all-day comfort.' }}
+    </p>
+  </div>
 </div>
 
-<div class="product-info">
-
-<h1>{{ product.name }}</h1>
-<div class="price">{{ product.display_price }}</div>
-
-<h3>Select Size</h3>
-
-<div class="size-grid">
-<button class="size-btn" onclick="selectSize(this)">UK 6</button>
-<button class="size-btn" onclick="selectSize(this)">UK 7</button>
-<button class="size-btn disabled">UK 8 (Out)</button>
-<button class="size-btn" onclick="selectSize(this)">UK 9</button>
-<button class="size-btn" onclick="selectSize(this)">UK 10</button>
+<!-- Recommended -->
+{% if recommended %}
+<div class="section-wrap">
+  <h2>You May Also Like</h2>
+  <div class="rec-grid">
+    {% for item in recommended %}
+    <div class="rec-card">
+      <a href="/product/{{ item.id }}">
+        <img src="{{ item.image }}" alt="{{ item.name }}">
+        <div class="rec-card-info">
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.display_price }}</p>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
 </div>
+{% endif %}
 
-<p><a href="#" onclick="openSizeChart()">Size Guide</a></p>
-
-<button class="btn cart-btn"
-onclick="addToCart('{{ product.name }}','{{ product.display_price }}','{{ product.image }}')">
-Add To Cart
-</button>
-
-<button class="btn wishlist-btn"
-onclick="addWishlist('{{ product.name }}','{{ product.display_price }}','{{ product.image }}')">
-Add To Wishlist
-</button>
-
+<!-- Recently Viewed -->
+{% if recent %}
+<div class="section-wrap" style="padding-top:0;">
+  <h2>Recently Viewed</h2>
+  <div class="rec-grid">
+    {% for item in recent %}
+    <div class="rec-card">
+      <a href="/product/{{ item.id }}">
+        <img src="{{ item.image }}" alt="{{ item.name }}">
+        <div class="rec-card-info">
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.display_price }}</p>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
 </div>
-</div>
+{% endif %}
 
-
-<section style="padding:60px">
-<h2>You May Also Like</h2>
-<div class="product-grid">
-{% for item in recommended %}
-<div class="product">
-<a href="/product/{{ item.id }}">
-<img src="{{ item.image }}">
-<h3>{{ item.name }}</h3>
-<p>{{ item.display_price }}</p>
-</a>
-</div>
-{% endfor %}
-</div>
-</section>
-
-
-<section style="padding:60px">
-<h2>Recently Viewed</h2>
-<div class="product-grid">
-{% for item in recent %}
-<div class="product">
-<a href="/product/{{ item.id }}">
-<img src="{{ item.image }}">
-<h3>{{ item.name }}</h3>
-<p>{{ item.display_price }}</p>
-</a>
-</div>
-{% endfor %}
-</div>
-</section>
-
-
+<!-- Size Chart Modal -->
 <div id="sizeChartModal" class="size-modal">
-<div class="size-modal-content">
-<span class="close" onclick="closeSizeChart()">×</span>
-<h2>Shoe Size Chart</h2>
-<table>
-<tr><th>UK</th><th>US</th><th>EU</th><th>CM</th></tr>
-<tr><td>6</td><td>7</td><td>40</td><td>25</td></tr>
-<tr><td>7</td><td>8</td><td>41</td><td>26</td></tr>
-<tr><td>8</td><td>9</td><td>42</td><td>27</td></tr>
-<tr><td>9</td><td>10</td><td>43</td><td>28</td></tr>
-<tr><td>10</td><td>11</td><td>44</td><td>29</td></tr>
-</table>
-</div>
+  <div class="size-modal-content">
+    <span class="modal-close" onclick="closeSizeChart()">×</span>
+    <h2>Size Guide</h2>
+    <table>
+      <tr><th>UK</th><th>US</th><th>EU</th><th>CM</th></tr>
+      <tr><td>6</td><td>7</td><td>40</td><td>25</td></tr>
+      <tr><td>7</td><td>8</td><td>41</td><td>26</td></tr>
+      <tr><td>8</td><td>9</td><td>42</td><td>27</td></tr>
+      <tr><td>9</td><td>10</td><td>43</td><td>28</td></tr>
+      <tr><td>10</td><td>11</td><td>44</td><td>29</td></tr>
+    </table>
+  </div>
 </div>
 
+<!-- Toast -->
+<div class="toast" id="cart-toast">
+  <img id="toast-img" src="{{ product.image }}" alt="" onerror="this.style.display='none'">
+  <div class="toast-text">
+    <span class="toast-title" id="toast-title">✓ Added to bag</span>
+    <span class="toast-name"  id="toast-name">{{ product.name }}</span>
+  </div>
+</div>
 
 <script>
-    let selectedSize = null;
-    
-    function selectSize(btn) {
-        document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        selectedSize = btn.innerText;
+var selectedSize = null;
+var productId    = "{{ product.id }}";
+
+function selectSize(el) {
+  if (el.classList.contains("out")) return;
+  document.querySelectorAll('.size-box').forEach(function(b) { b.classList.remove('selected'); });
+  el.classList.add('selected');
+  selectedSize = el.innerText;
+  // Hide hint once selected
+  document.getElementById("size-hint").classList.remove("show");
+}
+
+function showToast(title, name) {
+  document.getElementById("toast-title").textContent = title;
+  document.getElementById("toast-name").textContent  = name || "";
+  var t = document.getElementById("cart-toast");
+  t.classList.add("show");
+  setTimeout(function() { t.classList.remove("show"); }, 3200);
+}
+
+/* ── ADD TO CART — zero alerts, toast only ── */
+function addToCart() {
+  if (!selectedSize) {
+    var hint = document.getElementById("size-hint");
+    var grid = document.getElementById("size-grid");
+    hint.classList.add("show");
+    grid.classList.add("shake");
+    setTimeout(function() { grid.classList.remove("shake"); }, 420);
+    return;
+  }
+
+  fetch('/add_to_cart', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name: "{{ product.name }}",
+      price: "{{ product.display_price }}",
+      image: "{{ product.image }}",
+      size: selectedSize,
+      id: "{{ product.id }}"
+    })
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error("Server error");
+    return res.json();
+  })
+  .then(function(data) {
+
+    // ✅ update cart count
+    var counter = document.getElementById("cart-count");
+    if (counter) {
+      counter.innerText = data.count;
     }
-    
-    function showToast(name, image) {
-        document.getElementById("toast-name").textContent = name;
-        document.getElementById("toast-img").src = image;
-        var toast = document.getElementById("cart-toast");
-        toast.classList.add("show");
-        setTimeout(function() { toast.classList.remove("show"); }, 3000);
-    }
-    
-    function addToCart(name, price, image) {
-        if (!selectedSize) { alert("Please select a size first"); return; }
-        fetch("/add_to_cart", {
-            method:  "POST",
-            headers: { "Content-Type": "application/json" },
-            body:    JSON.stringify({ name: name, price: price, image: image, size: selectedSize })
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            // Update cart counter
-            var counter = document.getElementById("cart-count");
-            if (counter) {
-                counter.innerText = data.count;
-            } else {
-                var icon = document.querySelector(".fa-shopping-cart");
-                var span = document.createElement("span");
-                span.id = "cart-count";
-                span.style = "background:black;color:white;border-radius:50%;padding:2px 6px;font-size:12px;vertical-align:top;";
-                span.innerText = data.count;
-                icon.parentElement.appendChild(span);
-            }
-            // Show toast instead of alert
-            showToast(name, image);
-        })
-        .catch(function() { alert("Error adding to cart."); });
-    }
-    
-    function addWishlist(name, price, image) {
-        fetch("/api/toggle_wishlist", {
-            method:  "POST",
-            headers: { "Content-Type": "application/json" },
-            body:    JSON.stringify({ name: name, price: price, image: image })
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            // Show wishlist toast
-            document.getElementById("toast-name").textContent = name;
-            document.getElementById("toast-img").src = image;
-            document.querySelector(".toast-title").textContent =
-                data.status === "added" ? "♡ Added to wishlist" : "♡ Removed from wishlist";
-            var toast = document.getElementById("cart-toast");
-            toast.classList.add("show");
-            setTimeout(function() {
-                toast.classList.remove("show");
-                document.querySelector(".toast-title").textContent = "✓ Added to cart";
-            }, 3000);
-        });
-    }
-    
-    function openSizeChart()  { document.getElementById("sizeChartModal").style.display = "block"; }
-    function closeSizeChart() { document.getElementById("sizeChartModal").style.display = "none"; }
-    </script>
-<!-- Toast notification -->
-<div class="toast" id="cart-toast">
-    <img id="toast-img" src="" alt="">
-    <div class="toast-text">
-        <span class="toast-title">✓ Added to cart</span>
-        <span class="toast-name" id="toast-name"></span>
-    </div>
-</div>
+
+    // ✅ success toast
+    showToast("✓ Added to bag", "{{ product.name }} — " + selectedSize);
+
+  })
+  .catch(function(err) {
+    console.error(err);
+
+    // ❌ NO alert — use toast instead
+    showToast("⚠ Could not add to bag", "Try again");
+  });
+}
+
+/* ── WISHLIST ── */
+function toggleFavorite(btn, name, price, image, id) {
+  if (!btn.classList.contains("active") && !selectedSize) {
+    var hint = document.getElementById("size-hint");
+    var grid = document.getElementById("size-grid");
+    hint.classList.add("show");
+    grid.classList.add("shake");
+    setTimeout(function() { grid.classList.remove("shake"); }, 420);
+    return;
+  }
+
+  btn.classList.toggle("active");
+  var isActive = btn.classList.contains("active");
+  btn.innerHTML = isActive
+    ? '<i class="fa fa-heart"></i> Favorited'
+    : '<i class="fa fa-heart-o"></i> Add to Wishlist';
+
+  fetch('/api/toggle_wishlist', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ name: name, price: price, image: image, size: selectedSize, id: id })
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(data) {
+    showToast(
+      data.status === 'added' ? '♡ Added to wishlist' : '♡ Removed from wishlist',
+      name
+    );
+  })
+  .catch(function() {
+    showToast('⚠ Error', 'Could not update wishlist');
+  });
+}
+
+function openSizeChart()  { document.getElementById("sizeChartModal").style.display = "block"; }
+function closeSizeChart() { document.getElementById("sizeChartModal").style.display = "none"; }
+
+document.getElementById("sizeChartModal").addEventListener("click", function(e) {
+  if (e.target === this) closeSizeChart();
+});
+</script>
 </body>
 </html>

@@ -1,157 +1,489 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Your Cart | Sneaker Base</title>
-  <link rel="stylesheet" href="/static/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<meta charset="UTF-8">
+<title>Your Cart | Sneaker Base</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/style.css">
+<style>
+body { background: var(--off-white); }
+.cart-item-modern {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 24px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 16px;
+  transition: 0.25s;
+}
 
-  <style>
-    /* ── Toast notification ── */
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: black;
-      color: white;
-      padding: 14px 24px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 9999;
-    }
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-    .toast i { color: #4caf50; font-size: 18px; }
+.cart-item-modern:hover {
+  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+}
 
-    /* ── Clear cart button ── */
-    .clear-btn {
-      color: red;
-      text-decoration: none;
-      margin-right: 20px;
-      font-weight: 600;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-size: 16px;
-    }
-    .clear-btn:hover { text-decoration: underline; }
-  </style>
+.cart-img img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.cart-info {
+  flex: 1;
+}
+
+.cart-title {
+  font-size: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.cart-brand {
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: #e85d2f;
+  margin-bottom: 6px;
+}
+
+.cart-meta {
+  font-size: 13px;
+  color: #666;
+  margin: 8px 0;
+}
+
+.cart-price {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.cart-actions {
+  display: flex;
+  align-items: center;
+}
+
+.cart-remove-btn {
+  background: transparent;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cart-remove-btn:hover {
+  color: #e53935;
+}
+
+.page-hero {
+  background: var(--black);
+  padding: 48px 48px 36px;
+}
+
+.page-hero h1 {
+  font-family: var(--font-display);
+  font-size: 52px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--white);
+  line-height: 1;
+}
+
+.page-hero p {
+  color: rgba(255,255,255,0.4);
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.cart-layout {
+  max-width: 1100px;
+  margin: 48px auto;
+  padding: 0 48px;
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Cart items */
+.cart-items { }
+
+.cart-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--grey-200);
+  transition: box-shadow var(--transition);
+}
+
+.cart-item:hover { box-shadow: var(--shadow-md); }
+
+/* Clickable image */
+.cart-item-img-link {
+  display: block;
+  flex-shrink: 0;
+  width: 110px;
+  height: 110px;
+  background: var(--grey-100);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: opacity 0.2s;
+}
+
+.cart-item-img-link:hover { opacity: 0.85; }
+
+.cart-item-img-link img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 12px;
+}
+
+.cart-item-details { flex: 1; min-width: 0; }
+
+.cart-brand {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.cart-name-link {
+  text-decoration: none;
+  color: var(--black);
+}
+
+.cart-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  transition: color 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cart-name-link:hover .cart-name { color: var(--accent); }
+
+.cart-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cart-size-tag {
+  background: var(--grey-100);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--black);
+}
+
+.cart-price {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--black);
+  margin-top: 10px;
+}
+
+/* Order summary */
+.order-summary {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 28px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--grey-200);
+  position: sticky;
+  top: 88px;
+}
+
+.order-summary h2 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--grey-200);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  margin-bottom: 12px;
+  color: var(--grey-700);
+}
+
+.summary-row.total {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--black);
+  border-top: 1px solid var(--grey-200);
+  padding-top: 16px;
+  margin-top: 8px;
+}
+
+.btn-checkout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 17px;
+  background: var(--black);
+  color: var(--white);
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.btn-checkout:hover {
+  background: var(--accent);
+  transform: translateY(-2px);
+}
+
+.btn-clear-cart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  color: var(--grey-500);
+  border: 1.5px solid var(--grey-200);
+  border-radius: 50px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-clear-cart:hover { border-color: #e53935; color: #e53935; }
+
+.continue-link {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--grey-500);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.continue-link:hover { color: var(--black); text-decoration: underline; }
+
+/* Empty state */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.empty-icon { font-size: 64px; color: var(--grey-200); margin-bottom: 24px; }
+
+.empty-state h2 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.empty-state p { color: var(--grey-500); margin-bottom: 32px; }
+
+.btn-shop {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--black);
+  color: var(--white);
+  padding: 15px 36px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: background 0.2s;
+}
+
+.btn-shop:hover { background: var(--accent); text-decoration: none; color: white; }
+
+@media(max-width:900px) {
+  .cart-layout { grid-template-columns: 1fr; padding: 0 20px; }
+  .page-hero { padding: 36px 20px 28px; }
+  .order-summary { position: static; }
+}
+</style>
 </head>
-<body style="background:white;">
-
-<!-- Toast notification -->
-<div class="toast" id="toast">
-  <i class="fa fa-check-circle"></i>
-  <span id="toast-msg">Product added to cart!</span>
-</div>
+<body>
 
 <header class="header">
-    <div class="logo">
-        <img src="/static/assets/images/logo.png" alt="Sneaker Base">
-    </div>
-
-    <nav class="nav-links">
-        <a href="/">Home</a>
-        <a href="/products">Men</a>
-        <a href="/products">Women</a>
-        <a href="/products">New In</a>
-        <div class="dropdown">
-            <a href="#" style="cursor:pointer;">Brands ▾</a>
-            <div class="dropdown-content">
-                <a href="/products?brand=Jordan">Air Jordan</a>
-                <a href="/products?brand=Nike">Nike</a>
-                <a href="/products?brand=Adidas">Adidas</a>
-                <a href="/products?brand=Yeezy">Yeezy</a>
-                <a href="/products">All Brands</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="icons" style="display:flex;align-items:center;gap:20px;">
-        <a href="/wishlist" title="My Wishlist" style="color:black;text-decoration:none;">
-            <i class="fa fa-heart-o fa-2x"></i>
-        </a>
-        <a href="/cart" style="color:black;text-decoration:none;">
-            <i class="fa fa-shopping-cart fa-2x"></i>
-            {% if cart_count and cart_count > 0 %}
-            <span id="cart-count"
-                  style="background:black;color:white;border-radius:50%;padding:2px 6px;font-size:12px;vertical-align:top;">
-              {{ cart_count }}
-            </span>
-            {% endif %}
-        </a>
-    </div>
+  <div class="logo"><img src="/static/assets/images/logo.png" alt="Sneaker Base"></div>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products">Shop</a>
+    <a href="/wishlist">Wishlist</a>
+    <a href="/cart">Cart</a>
+  </nav>
+  <div class="icons">
+    <a href="/wishlist"><i class="fa fa-heart-o fa-lg"></i></a>
+    <a href="/cart">
+      <i class="fa fa-shopping-cart fa-lg"></i>
+      {% if cart_count and cart_count > 0 %}
+      <span style="background:black;color:white;border-radius:50%;padding:2px 7px;font-size:11px;vertical-align:top;font-weight:700;">{{ cart_count }}</span>
+      {% endif %}
+    </a>
+  </div>
 </header>
 
+<div class="page-hero">
+  <h1>Your Cart</h1>
+  <p>{{ cart|length }} item{% if cart|length != 1 %}s{% endif %} in your bag</p>
+</div>
 
-<section style="padding:50px;text-align:center;">
-  <h1>Your Shopping Cart</h1>
+<div class="cart-layout">
 
   {% if cart %}
-    <div style="max-width:800px;margin:30px auto;text-align:left;">
 
-      {% for item in cart %}
-      <div style="display:flex;align-items:center;border-bottom:1px solid #ddd;padding:15px;">
-        <img src="{{ item.image }}" style="width:80px;height:80px;object-fit:contain;">
-        <div style="margin-left:20px;">
-          <h3>{{ item.name }}</h3>
-          <p>Price: {{ item.price }}</p>
-          {% if item.size %}
-          <p style="color:#888;font-size:13px;">Size: {{ item.size }}</p>
-          {% endif %}
-        </div>
-      </div>
-      {% endfor %}
+  <!-- Items column -->
+  <div class="cart-items">
+    {% for item in cart %}
+    <div class="cart-item-modern">
+  
+  <!-- LEFT: IMAGE -->
+  <div class="cart-img">
+    <img src="{{ item.image }}" alt="{{ item.name }}">
+  </div>
 
-      <h2 style="margin-top:20px;text-align:right;">Total: ₹{{ total }}</h2>
+  <!-- CENTER: INFO -->
+  <div class="cart-info">
+    <div class="cart-brand">SNEAKER BASE</div>
+    <div class="cart-title">{{ item.name }}</div>
 
-      <div style="text-align:right;margin-top:20px;">
-
-        <!-- Fix 1: Clear cart uses POST form, not a link -->
-        <form action="/clear_cart" method="POST" style="display:inline;">
-          <button type="submit" class="clear-btn">Clear Cart</button>
-        </form>
-
-        <button style="padding:10px 30px;background:black;color:white;border:none;font-size:18px;cursor:pointer;">
-          Checkout
-        </button>
-      </div>
+    <div class="cart-meta">
+      {% if item.size %}
+        <span class="cart-size">Size: {{ item.size }}</span>
+      {% else %}
+        <span class="cart-size">No size selected</span>
+      {% endif %}
     </div>
 
-  {% else %}
-    <p>Your cart is empty.</p>
-    <a href="/products" style="color:blue;">Go buy some sneakers!</a>
-  {% endif %}
-</section>
+    <div class="cart-price">{{ item.price }}</div>
+  </div>
 
+  <!-- RIGHT: ACTION -->
+  <div class="cart-actions">
+    <form action="/remove_from_cart" method="POST">
+      <input type="hidden" name="id" value="{{ item.id }}">
+      <button class="cart-remove-btn">
+        <i class="fa fa-trash"></i> Remove
+      </button>
+    </form>
+  </div>
+
+</div>
+          {% if item.size %}
+          <span class="cart-size-tag"><i class="fa fa-tag" style="font-size:10px;"></i> {{ item.size }}</span>
+          {% endif %}
+          <span style="font-size:13px;color:var(--grey-500);">Qty: 1</span>
+        </div>
+        <div class="cart-price">{{ item.price }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Summary column -->
+  <div class="order-summary">
+    <h2>Order Summary</h2>
+
+    {% for item in cart %}
+    <div class="summary-row">
+      <span style="font-size:13px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ item.name }}</span>
+      <span style="font-size:13px;font-weight:600;">{{ item.price }}</span>
+    </div>
+    {% endfor %}
+
+    <div class="summary-row">
+      <span>Shipping</span>
+      <span style="color:#2e7d32;font-weight:600;">Free</span>
+    </div>
+
+    <div class="summary-row total">
+      <span>Total</span>
+      <span>₹{{ total }}</span>
+    </div>
+
+    <button class="btn-checkout">
+      <i class="fa fa-lock"></i> Secure Checkout
+    </button>
+
+    <form action="/clear_cart" method="POST">
+      <button type="submit" class="btn-clear-cart">
+        <i class="fa fa-trash-o"></i> Clear Cart
+      </button>
+    </form>
+
+    <a href="/products" class="continue-link">← Continue Shopping</a>
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon"><i class="fa fa-shopping-cart"></i></div>
+    <h2>Your Cart is Empty</h2>
+    <p>Looks like you haven't added anything yet.</p>
+    <a href="/products" class="btn-shop">
+      <i class="fa fa-arrow-right"></i> Shop Now
+    </a>
+  </div>
+  {% endif %}
+
+</div>
 
 <script>
-  // ── Toast function — call this from anywhere ─────────────────
-  function showToast(msg) {
-    var toast = document.getElementById("toast");
-    var label = document.getElementById("toast-msg");
-    label.textContent = msg || "Product added to cart!";
-    toast.classList.add("show");
-    setTimeout(function() {
-      toast.classList.remove("show");
-    }, 3000);
-  }
-
-  // ── Show toast if redirected here after adding to cart ───────
+  // Show toast if redirected here after adding
   var params = new URLSearchParams(window.location.search);
   if (params.get("added") === "1") {
-    showToast("Product added to cart!");
-    // Clean URL without reloading
     window.history.replaceState({}, "", "/cart");
   }
 </script>

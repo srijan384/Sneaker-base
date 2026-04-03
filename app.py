@@ -573,6 +573,14 @@ def debug_unblock_me():
 
 
 # ── Unchanged routes ──────────────────────────────────────────────
+# ================================================================
+# PASTE THESE TWO ROUTES INTO YOUR app.py
+# Replace the existing toggle_wishlist and api_sneakers routes
+# ================================================================
+
+
+
+# ── Fix 2: api_sneakers includes display_price ────────────────────
 @app.route("/api/sneakers")
 def api_sneakers():
     ip      = get_client_ip()
@@ -582,43 +590,33 @@ def api_sneakers():
     if flagged:
         sample = [fake_product(s) for s in sample]
     return jsonify([{
-        "id": s["id"], "name": s["name"],
-        "price": s["display_price"], "image": s["image"],
+        "id":            s["id"],
+        "name":          s["name"],
+        "price":         s["display_price"],   # was s["display_price"] — keep
+        "display_price": s["display_price"],   # add this so templates work
+        "image":         s["image"],
     } for s in sample])
 
 
+# ── Fix 3: add_to_cart also saves id ─────────────────────────────
 @app.route("/add_to_cart", methods=["POST"])
 def add_to_cart():
     data = request.json
     if "cart" not in session:
         session["cart"] = []
-    session["cart"].append(data)
+    session["cart"].append({
+        "name":  data.get("name", ""),
+        "price": data.get("price", ""),
+        "image": data.get("image", ""),
+        "size":  data.get("size", ""),
+        "id":    data.get("id", ""),   # save id so cart items are also clickable
+    })
     session.modified = True
     return jsonify({
         "count":   len(session["cart"]),
         "message": "Item added!",
         "success": True
     })
-
-@app.route("/api/toggle_wishlist", methods=["POST"])
-def toggle_wishlist():
-    data = request.json
-    if "wishlist" not in session:
-        session["wishlist"] = []
-    existing, new_list = False, []
-    for item in session["wishlist"]:
-        if item["name"] == data["name"]:
-            existing = True
-        else:
-            new_list.append(item)
-    if not existing:
-        new_list.append(data)
-        action = "added"
-    else:
-        action = "removed"
-    session["wishlist"] = new_list
-    session.modified    = True
-    return jsonify({"status": action, "count": len(session["wishlist"])})
 
 
 @app.route("/cart")
@@ -632,6 +630,17 @@ def view_cart():
             pass
     return render_template("cart.html", cart=cart, total=total, cart_count=len(cart))
 
+@app.route("/remove_from_cart", methods=["POST"])
+def remove_from_cart():
+    item_id = request.form.get("id")
+
+    cart = session.get("cart", [])
+    cart = [item for item in cart if str(item.get("id")) != str(item_id)]
+
+    session["cart"] = cart
+    session.modified = True
+
+    return redirect("/cart")
 
 @app.route("/wishlist")
 def wishlist_page():
@@ -639,6 +648,33 @@ def wishlist_page():
     return render_template("wishlist.html", products=items,
                            cart_count=len(session.get("cart", [])))
 
+@app.route('/api/toggle_wishlist', methods=['POST'])
+def toggle_wishlist():
+    data = request.json
+
+    if "wishlist" not in session:
+        session["wishlist"] = []
+
+    wishlist = session["wishlist"]
+
+    # Check if item already exists → remove it
+    for item in wishlist:
+        if item.get("id") == data.get("id"):
+            wishlist.remove(item)
+            session.modified = True
+            return jsonify({"status": "removed"})
+
+    # Add new item (WITH ID 🔥)
+    wishlist.append({
+        "name": data.get("name"),
+        "price": data.get("price"),
+        "image": data.get("image"),
+        "size": data.get("size"),
+        "id": data.get("id")   # ⭐ MOST IMPORTANT LINE
+    })
+
+    session.modified = True
+    return jsonify({"status": "added"})
 
 @app.route("/soc")
 def soc_dashboard():
