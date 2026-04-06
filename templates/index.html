@@ -46,6 +46,10 @@
     font-size: 14px;
     font-weight: 600;
 }
+.profile-link {
+  display: inline-block;
+  cursor: pointer;
+}
 .product-cart-btn:hover { background: #333; }
         .fav-btn {
             position: absolute; top: 10px; right: 10px; background: white;
@@ -113,7 +117,11 @@
             <span id="cart-count" style="background: black; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; vertical-align: top;">{{ cart_count }}</span>
             {% endif %}
         </a>
+        <a href="/profile" title="My Profile">
+            <i class="fa fa-user fa-2x" style="color: black;"></i>
+        </a>
     </div>
+    
 </header>
 
 <section class="hero">

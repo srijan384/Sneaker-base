@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Profile | Sneaker Base</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/static/style.css">
+
+<style>
+body { font-family: 'DM Sans', sans-serif; background: #f6f6f6; margin: 0; }
+
+.profile-hero {
+  background: #0d0d0d;
+  color: white;
+  padding: 48px 64px 64px;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(200,241,53,0.1) 0%, transparent 60%);
+}
+
+.profile-top {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: #c8f135;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: #0d0d0d;
+  flex-shrink: 0;
+}
+
+.avatar img {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-info h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.profile-info p { color: #888; font-size: 14px; }
+
+.profile-badge {
+  display: inline-block;
+  background: rgba(200,241,53,0.15);
+  border: 1px solid rgba(200,241,53,0.3);
+  color: #c8f135;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+
+.logout-btn {
+  margin-left: auto;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid #333;
+  color: #888;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  transition: 0.2s;
+  position: relative;
+  z-index: 1;
+}
+.logout-btn:hover { border-color: #555; color: white; }
+
+/* ── Stats bar ── */
+.stats-bar {
+  display: flex;
+  gap: 40px;
+  margin-top: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+.stat { text-align: center; }
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: #c8f135;
+  letter-spacing: 2px;
+}
+.stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+
+/* ── Tab nav ── */
+.profile-tabs {
+  display: flex;
+  gap: 0;
+  background: white;
+  border-bottom: 1px solid #eee;
+  padding: 0 64px;
+}
+
+.profile-tab {
+  padding: 16px 24px;
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #999;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.profile-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: black;
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+
+.profile-tab.active { color: black; }
+.profile-tab.active::after { transform: scaleX(1); }
+
+/* ── Tab content ── */
+.tab-content { display: none; padding: 40px 64px; }
+.tab-content.active { display: block; }
+
+/* ── Section heading ── */
+.section-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  color: #0d0d0d;
+}
+
+/* ── Order cards ── */
+.order-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.order-img {
+  width: 72px; height: 72px;
+  object-fit: contain;
+  background: #f7f7f7;
+  border-radius: 8px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.order-info { flex: 1; }
+.order-name  { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+.order-meta  { font-size: 12px; color: #999; }
+.order-price { font-size: 18px; font-weight: 700; }
+
+.order-status {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.status-delivered { background: #e8f5e9; color: #388e3c; }
+.status-shipped   { background: #e3f2fd; color: #1976d2; }
+.status-pending   { background: #fff8e1; color: #f57f17; }
+
+/* ── Wishlist / Cart grid ── */
+.items-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.item-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  width: 200px;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.item-card img {
+  width: 100%;
+  height: 130px;
+  object-fit: contain;
+  background: #f7f7f7;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.item-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.item-card p  { font-size: 13px; color: #666; }
+
+/* ── Profile edit form ── */
+.edit-form {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 500px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.field-group { margin-bottom: 20px; }
+.field-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #999;
+  margin-bottom: 8px;
+}
+.field-group input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field-group input:focus { border-color: black; }
+
+.save-btn {
+  padding: 13px 32px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.save-btn:hover { background: #333; }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #bbb;
+}
+.empty-state i  { font-size: 48px; margin-bottom: 16px; display: block; }
+.empty-state p  { font-size: 15px; }
+.empty-state a  { color: black; font-weight: 600; text-decoration: none; }
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="logo"><img src="/static/assets/images/logo.png" alt="Sneaker Base"></div>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="/products">Shop</a>
+    <a href="/wishlist">Wishlist</a>
+    <a href="/cart">Cart</a>
+  </nav>
+  <div class="icons" style="display:flex;align-items:center;gap:20px;">
+    <a href="/wishlist" style="color:black;text-decoration:none;"><i class="fa fa-heart-o fa-2x"></i></a>
+    <a href="/cart" style="color:black;text-decoration:none;"><i class="fa fa-shopping-cart fa-2x"></i></a>
+  </div>
+</header>
+
+<!-- ── Profile hero ── -->
+<div class="profile-hero">
+  <div class="profile-top">
+    <div class="avatar" id="avatar-wrap">
+      {% if user.picture %}
+        <img src="{{ user.picture }}" alt="{{ user.name }}">
+      {% else %}
+        {{ user.name[0].upper() }}
+      {% endif %}
+    </div>
+    <div class="profile-info">
+      <h1>{{ user.name }}</h1>
+      <p>{{ user.email }}</p>
+      <span class="profile-badge">
+        {% if user.auth_provider == 'google' %}
+          Google Account
+        {% elif user.is_guest %}
+          Guest
+        {% else %}
+          Member
+        {% endif %}
+      </span>
+    </div>
+    <form action="/auth/logout" method="POST" style="margin-left:auto;">
+      <button type="submit" class="logout-btn">
+        <i class="fa fa-sign-out"></i> Log Out
+      </button>
+    </form>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-num">{{ orders|length }}</div>
+      <div class="stat-label">Orders</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">{{ wishlist|length }}</div>
+      <div class="stat-label">Wishlist</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">{{ cart|length }}</div>
+      <div class="stat-label">In Cart</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Tab navigation ── -->
+<div class="profile-tabs">
+  <button class="profile-tab active" onclick="showTab('orders', this)">Orders</button>
+  <button class="profile-tab" onclick="showTab('wishlist', this)">Wishlist</button>
+  <button class="profile-tab" onclick="showTab('cart', this)">Cart</button>
+  <button class="profile-tab" onclick="showTab('settings', this)">Settings</button>
+</div>
+
+<!-- ── Orders tab ── -->
+<div class="tab-content active" id="tab-orders">
+  <h2 class="section-heading">Order History</h2>
+
+  {% if orders %}
+    {% for order in orders %}
+    <div class="order-card">
+      <img src="{{ order.image }}" class="order-img" alt="{{ order.name }}">
+      <div class="order-info">
+        <div class="order-name">{{ order.name }}</div>
+        <div class="order-meta">
+          Size: {{ order.size or 'N/A' }} &nbsp;·&nbsp;
+          Ordered: {{ order.date or 'Recently' }}
+        </div>
+      </div>
+      <div class="order-price">{{ order.price }}</div>
+      <span class="order-status status-{{ order.status or 'pending' }}">
+        {{ order.status or 'Pending' }}
+      </span>
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <i class="fa fa-shopping-bag"></i>
+      <p>No orders yet. <a href="/products">Start shopping!</a></p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- ── Wishlist tab ── -->
+<div class="tab-content" id="tab-wishlist">
+  <h2 class="section-heading">My Wishlist</h2>
+
+  {% if wishlist %}
+    <div class="items-grid">
+      {% for item in wishlist %}
+      <div class="item-card">
+        <img src="{{ item.image }}" alt="{{ item.name }}">
+        <h4>{{ item.name }}</h4>
+        <p>{{ item.price }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="fa fa-heart-o"></i>
+      <p>Your wishlist is empty. <a href="/products">Browse sneakers!</a></p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- ── Cart tab ── -->
+<div class="tab-content" id="tab-cart">
+  <h2 class="section-heading">My Cart</h2>
+
+  {% if cart %}
+    <div class="items-grid">
+      {% for item in cart %}
+      <div class="item-card">
+        <img src="{{ item.image }}" alt="{{ item.name }}">
+        <h4>{{ item.name }}</h4>
+        <p>{{ item.price }}</p>
+      </div>
+      {% endfor %}
+    </div>
+    <div style="margin-top:24px;">
+      <a href="/cart" style="padding:13px 28px;background:black;color:white;border-radius:8px;text-decoration:none;font-weight:600;">
+        View Full Cart
+      </a>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="fa fa-shopping-cart"></i>
+      <p>Your cart is empty. <a href="/products">Shop now!</a></p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- ── Settings tab ── -->
+<div class="tab-content" id="tab-settings">
+  <h2 class="section-heading">Account Settings</h2>
+
+  <div class="edit-form">
+    <div id="settings-alert" style="display:none;padding:12px;border-radius:8px;margin-bottom:16px;font-size:13px;"></div>
+
+    <div class="field-group">
+      <label>Full Name</label>
+      <input type="text" id="set-name" value="{{ user.name }}">
+    </div>
+    <div class="field-group">
+      <label>Email Address</label>
+      <input type="email" id="set-email" value="{{ user.email }}"
+             {% if user.auth_provider == 'google' %}disabled{% endif %}>
+    </div>
+    {% if user.auth_provider != 'google' %}
+    <div class="field-group">
+      <label>New Password <span style="color:#bbb;font-weight:400;">(leave blank to keep current)</span></label>
+      <input type="password" id="set-password" placeholder="••••••••">
+    </div>
+    {% endif %}
+
+    <button class="save-btn" onclick="saveSettings()">Save Changes</button>
+  </div>
+</div>
+
+
+<script>
+// ── Tab switching ────────────────────────────────────────────────
+function showTab(name, btn) {
+    document.querySelectorAll(".tab-content").forEach(function(t) { t.classList.remove("active"); });
+    document.querySelectorAll(".profile-tab").forEach(function(b) { b.classList.remove("active"); });
+    document.getElementById("tab-" + name).classList.add("active");
+    btn.classList.add("active");
+}
+
+// ── Save settings ────────────────────────────────────────────────
+function saveSettings() {
+    var name     = document.getElementById("set-name").value.trim();
+    var email    = document.getElementById("set-email") ? document.getElementById("set-email").value.trim() : "";
+    var password = document.getElementById("set-password") ? document.getElementById("set-password").value : "";
+
+    fetch("/auth/update_profile", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ name: name, email: email, password: password })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        var alert = document.getElementById("settings-alert");
+        alert.style.display = "block";
+        if (data.success) {
+            alert.style.background = "#e8f5e9";
+            alert.style.color      = "#388e3c";
+            alert.textContent      = "Profile updated successfully!";
+        } else {
+            alert.style.background = "#ffebee";
+            alert.style.color      = "#c62828";
+            alert.textContent      = data.message || "Could not update profile.";
+        }
+        setTimeout(function() { alert.style.display = "none"; }, 3000);
+    });
+}
+</script>
+
+</body>
+</html>

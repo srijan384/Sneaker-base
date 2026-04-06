@@ -8,7 +8,12 @@ import os
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret")
+from auth import auth, init_oauth
+from datetime import timedelta
 
+app.register_blueprint(auth)
+oauth = init_oauth(app)
+app.permanent_session_lifetime = timedelta(days=30)
 fake = Faker()
 
 # ================================================================
@@ -309,15 +314,16 @@ def generate_fake_sneakers(count: int = 24) -> list:
 # ================================================================
 #  ROUTES
 # ================================================================
-
+from auth import login_required
 @app.route("/")
+@login_required
 def home():
     ip    = get_client_ip()
     state = record_visit(ip)
+
     return render_template("index.html",
                            cart_count=len(session.get("cart", [])),
                            bot_flagged=state.get("flagged", False))
-
 
 @app.route("/products")
 def products():
@@ -695,3 +701,12 @@ def clear_cart():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
     app.run(host="0.0.0.0", port=port, debug=True)
+
+
+@app.context_processor
+def inject_user():
+    from auth import get_current_user
+    user = get_current_user()
+    return {"current_user": user,
+            "is_logged_in": user is not None and not user.get("is_guest"),
+            "is_guest": user is not None and user.get("is_guest", False)}

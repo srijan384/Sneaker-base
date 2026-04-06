@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sneaker Base | Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+:root {
+  --black: #0d0d0d;
+  --white: #f8f8f6;
+  --accent: #c8f135;
+  --muted: #888;
+  --card: #181818;
+  --border: #2a2a2a;
+  --error: #ff4d4d;
+  --success: #4caf50;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+/* ── Left panel — brand visual ── */
+.left-panel {
+  width: 45%;
+  /* background: #111; */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px;
+  overflow: hidden;
+}
+
+.left-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  
+  pointer-events: none;
+}
+
+.brand-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 4px;
+  color: var(--white);
+  text-decoration: none;
+}
+
+.brand-logo span { color: var(--accent); }
+
+.left-content { position: relative; z-index: 1; }
+
+.left-content h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  line-height: 0.95;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.left-content h1 span { color: var(--accent); }
+
+.left-content p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 320px;
+}
+
+.left-badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.badge {
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* Floating shoe silhouette */
+.shoe-bg {
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 220px;
+  opacity: 0.04;
+  filter: blur(1px);
+  pointer-events: none;
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(-50%) rotate(-12deg); }
+  50%       { transform: translateY(-54%) rotate(-12deg); }
+}
+
+/* ── Right panel — form ── */
+.right-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+  position: relative;
+  background-color: orange;
+}
+
+.form-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 36px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 14px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.tab-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.25s ease;
+}
+
+.tab-btn.active { color: var(--white); }
+.tab-btn.active::after { transform: scaleX(1); }
+
+/* ── Form panels ── */
+.form-panel { display: none; }
+.form-panel.active { display: block; }
+
+.form-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+
+.form-subtitle {
+  color: white;
+  font-size: 13px;
+  margin-bottom: 28px;
+}
+
+/* ── Inputs ── */
+.input-group {
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.input-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus { border-color: var(--accent); }
+.input-group input::placeholder { color: #444; }
+
+.input-group input.error { border-color: var(--error); }
+
+.eye-toggle {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* ── Error message ── */
+.error-msg {
+  color: var(--error);
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+.error-msg.show { display: block; }
+
+/* ── Alert banner ── */
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+}
+.alert.show { display: block; }
+.alert.error   { background: rgba(255,77,77,0.12); border:1px solid rgba(255,77,77,0.3); color: var(--error); }
+.alert.success { background: rgba(76,175,80,0.12); border:1px solid rgba(76,175,80,0.3); color: var(--success); }
+
+/* ── Buttons ── */
+.btn-primary {
+  width: 100%;
+  padding: 15px;
+  background: orange;
+  color: black;
+  border: 1px solid black;
+  border-radius: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 8px;
+}
+
+.btn-primary:hover   { background: black; color:white}
+.btn-primary:active  { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Divider ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ── Google button ── */
+.btn-google {
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.btn-google:hover { border-color: #555; background: #1a1a1a; }
+
+.google-icon {
+  width: 18px; height: 18px;
+  background: url('https://www.google.com/favicon.ico') center/contain no-repeat;
+}
+
+/* ── Guest button ── */
+.btn-guest {
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: border-color 0.2s, color 0.2s;
+  letter-spacing: 0.5px;
+}
+.btn-guest:hover { border-color: #555; color: white; background-color: black;}
+
+/* ── Forgot password ── */
+.forgot {
+  text-align: right;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+.forgot a {
+  color: var(--muted);
+  font-size: 12px;
+  text-decoration: none;
+}
+.forgot a:hover { color: var(--white); }
+
+#fresh{
+    color: orange;
+}
+/* ── Spinner ── */
+.spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(0,0,0,0.3);
+  border-top-color: var(--black);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .left-panel { display: none; }
+  .right-panel { padding: 32px 24px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ── Left brand panel ── -->
+<div class="left-panel">
+  <a href="/" class="brand-logo">SNEAKER<span id="fresh">BASE</span></a>
+
+  <div class="left-content">
+    <h1>STEP INTO <span id="fresh">FRESH</span></h1>
+    <p>Join thousands of sneaker heads getting exclusive drops, member-only prices, and personalised recommendations.</p>
+  </div>
+
+  <div class="left-badges">
+    <span class="badge">FREE SHIPPING</span>
+    <span class="badge">EXCLUSIVE DROPS</span>
+    <span class="badge">EASY RETURNS</span>
+  </div>
+
+  <div class="shoe-bg">👟</div>
+</div>
+
+<!-- ── Right form panel ── -->
+<div class="right-panel">
+<div class="form-card">
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+    <button class="tab-btn" onclick="switchTab('signup')">Create Account</button>
+  </div>
+
+  <!-- ── LOGIN PANEL ── -->
+  <div class="form-panel active" id="panel-login">
+
+    <h2 class="form-title">Welcome Back</h2>
+    <p class="form-subtitle">Sign in to your account to continue</p>
+
+    <div class="alert" id="login-alert"></div>
+
+    <div class="input-group">
+      <label>Email Address</label>
+      <input type="email" id="login-email" placeholder="you@example.com">
+      <span class="error-msg" id="login-email-err">Please enter a valid email</span>
+    </div>
+
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••">
+      <span class="eye-toggle" onclick="togglePwd('login-password', this)">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="error-msg" id="login-pwd-err">Password is required</span>
+    </div>
+
+    <div class="forgot"><a href="/forgot-password">Forgot password?</a></div>
+
+    <button class="btn-primary" id="login-btn" onclick="handleLogin()">Sign In</button>
+
+    <div class="divider">or continue with</div>
+
+    <button class="btn-google" onclick="handleGoogle()">
+      <span class="google-icon"></span>
+      Continue with Google
+    </button>
+
+    <button class="btn-guest" onclick="handleGuest()">
+      👤 Continue as Guest
+    </button>
+
+  </div>
+
+  <!-- ── SIGNUP PANEL ── -->
+  <div class="form-panel" id="panel-signup">
+
+    <h2 class="form-title">Create Account</h2>
+    <p class="form-subtitle">Join the Sneaker Base community</p>
+
+    <div class="alert" id="signup-alert"></div>
+
+    <div class="input-group">
+      <label>Full Name</label>
+      <input type="text" id="signup-name" placeholder="Your Name">
+      <span class="error-msg" id="signup-name-err">Name is required</span>
+    </div>
+
+    <div class="input-group">
+      <label>Email Address</label>
+      <input type="email" id="signup-email" placeholder="you@example.com">
+      <span class="error-msg" id="signup-email-err">Please enter a valid email</span>
+    </div>
+
+    <div class="input-group">
+      <label>Password</label>
+      <input type="password" id="signup-password" placeholder="Min 8 characters">
+      <span class="eye-toggle" onclick="togglePwd('signup-password', this)">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="error-msg" id="signup-pwd-err">Password must be at least 8 characters</span>
+    </div>
+
+    <div class="input-group">
+      <label>Confirm Password</label>
+      <input type="password" id="signup-confirm" placeholder="••••••••">
+      <span class="eye-toggle" onclick="togglePwd('signup-confirm', this)">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="error-msg" id="signup-confirm-err">Passwords do not match</span>
+    </div>
+
+    <button class="btn-primary" id="signup-btn" onclick="handleSignup()">Create Account</button>
+
+    <div class="divider">or continue with</div>
+
+    <button class="btn-google" onclick="handleGoogle()">
+      <span class="google-icon"></span>
+      Sign up with Google
+    </button>
+
+    <button class="btn-guest" onclick="handleGuest()">
+      👤 Continue as Guest
+    </button>
+
+  </div>
+
+</div>
+</div>
+
+<script>
+// ── Tab switching ────────────────────────────────────────────────
+function switchTab(tab) {
+    document.querySelectorAll(".tab-btn").forEach(function(b) { b.classList.remove("active"); });
+    document.querySelectorAll(".form-panel").forEach(function(p) { p.classList.remove("active"); });
+    document.querySelector('[onclick="switchTab(\'' + tab + '\')"]').classList.add("active");
+    document.getElementById("panel-" + tab).classList.add("active");
+}
+
+// ── Password visibility toggle ───────────────────────────────────
+function togglePwd(inputId, icon) {
+    var inp = document.getElementById(inputId);
+    var showing = inp.type === "text";
+    inp.type = showing ? "password" : "text";
+    icon.querySelector("i").className = showing ? "fa fa-eye" : "fa fa-eye-slash";
+}
+
+// ── Show / hide alert banner ─────────────────────────────────────
+function showAlert(id, msg, type) {
+    var el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = "alert show " + type;
+}
+function hideAlert(id) {
+    document.getElementById(id).className = "alert";
+}
+
+// ── Field validation helpers ─────────────────────────────────────
+function showErr(id) { document.getElementById(id).classList.add("show"); }
+function hideErr(id) { document.getElementById(id).classList.remove("show"); }
+function markErr(inputId, errId) {
+    document.getElementById(inputId).classList.add("error");
+    showErr(errId);
+}
+function clearErr(inputId, errId) {
+    document.getElementById(inputId).classList.remove("error");
+    hideErr(errId);
+}
+
+// ── Loading state on button ──────────────────────────────────────
+function setLoading(btnId, loading, label) {
+    var btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.innerHTML = loading
+        ? '<span class="spinner"></span> Please wait...'
+        : label;
+}
+
+// ── LOGIN ────────────────────────────────────────────────────────
+function handleLogin() {
+    var email = document.getElementById("login-email").value.trim();
+    var pwd   = document.getElementById("login-password").value;
+    var valid = true;
+
+    hideAlert("login-alert");
+    clearErr("login-email", "login-email-err");
+    clearErr("login-password", "login-pwd-err");
+
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+        markErr("login-email", "login-email-err"); valid = false;
+    }
+    if (!pwd) {
+        markErr("login-password", "login-pwd-err"); valid = false;
+    }
+    if (!valid) return;
+
+    setLoading("login-btn", true, "Sign In");
+
+    fetch("/auth/login", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ email: email, password: pwd })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        setLoading("login-btn", false, "Sign In");
+        if (data.success) {
+            window.location.href = data.redirect || "/";
+        } else {
+            showAlert("login-alert", data.message || "Invalid email or password", "error");
+        }
+    })
+    .catch(function() {
+        setLoading("login-btn", false, "Sign In");
+        showAlert("login-alert", "Something went wrong. Please try again.", "error");
+    });
+}
+
+// ── SIGNUP ───────────────────────────────────────────────────────
+function handleSignup() {
+    var name    = document.getElementById("signup-name").value.trim();
+    var email   = document.getElementById("signup-email").value.trim();
+    var pwd     = document.getElementById("signup-password").value;
+    var confirm = document.getElementById("signup-confirm").value;
+    var valid   = true;
+
+    hideAlert("signup-alert");
+    clearErr("signup-name",    "signup-name-err");
+    clearErr("signup-email",   "signup-email-err");
+    clearErr("signup-password","signup-pwd-err");
+    clearErr("signup-confirm", "signup-confirm-err");
+
+    if (!name) { markErr("signup-name", "signup-name-err"); valid = false; }
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+        markErr("signup-email", "signup-email-err"); valid = false;
+    }
+    if (!pwd || pwd.length < 8) {
+        markErr("signup-password", "signup-pwd-err"); valid = false;
+    }
+    if (pwd !== confirm) {
+        markErr("signup-confirm", "signup-confirm-err"); valid = false;
+    }
+    if (!valid) return;
+
+    setLoading("signup-btn", true, "Create Account");
+
+    fetch("/auth/signup", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ name: name, email: email, password: pwd })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        setLoading("signup-btn", false, "Create Account");
+        if (data.success) {
+            showAlert("signup-alert", "Account created! Signing you in...", "success");
+            setTimeout(function() {
+                window.location.href = data.redirect || "/";
+            }, 1200);
+        } else {
+            showAlert("signup-alert", data.message || "Could not create account", "error");
+        }
+    })
+    .catch(function() {
+        setLoading("signup-btn", false, "Create Account");
+        showAlert("signup-alert", "Something went wrong. Please try again.", "error");
+    });
+}
+
+// ── GOOGLE OAUTH ─────────────────────────────────────────────────
+function handleGoogle() {
+    window.location.href = "/auth/google";
+}
+
+// ── GUEST ────────────────────────────────────────────────────────
+function handleGuest() {
+    fetch("/auth/guest", { method: "POST" })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        window.location.href = data.redirect || "/";
+    })
+    .catch(function() {
+        window.location.href = "/";
+    });
+}
+
+// ── Enter key support ────────────────────────────────────────────
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        var activePanel = document.querySelector(".form-panel.active").id;
+        if (activePanel === "panel-login")  handleLogin();
+        if (activePanel === "panel-signup") handleSignup();
+    }
+});
+</script>
+
+</body>
+</html>
