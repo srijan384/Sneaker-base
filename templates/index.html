@@ -74,19 +74,91 @@
         .dropdown-content a { color: black; padding: 12px 16px; text-decoration: none; display: block; }
         .dropdown:hover .dropdown-content { display: block; }
     </style>
+  <meta charset="UTF-8">
+  <title>Sneaker Base | Premium Sneakers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    /* Section label */
+    .section-eyebrow {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    /* Brand strip */
+    .brand-strip {
+      background: var(--black);
+      padding: 22px 48px;
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      overflow: hidden;
+    }
+    .brand-strip span {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.28);
+      white-space: nowrap;
+      transition: color 0.2s;
+      cursor: default;
+    }
+    .brand-strip span:hover { color: rgba(255,255,255,0.7); }
+    /* Feature cards */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 2px;
+      background: var(--grey-200);
+      margin: 60px 0 0;
+    }
+    .feature-card {
+      background: var(--white);
+      padding: 40px 36px;
+      text-align: center;
+    }
+    .feature-card i {
+      font-size: 28px;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: block;
+    }
+    .feature-card h3 {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .feature-card p {
+      font-size: 14px;
+      color: var(--grey-500);
+      line-height: 1.6;
+    }
+    @media(max-width:768px) {
+      .brand-strip { gap: 28px; }
+      .features { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- BOT DETECT: load first -->
+<!-- BOT DETECT -->
 <script src="{{ url_for('static', filename='js/bot_detect.js') }}"></script>
 
-<!-- Honeypot links invisible to humans -->
-<a href="/trap/exclusive-access"
-   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
-   tabindex="-1" aria-hidden="true">exclusive</a>
-<a href="/api/v1/priority-access"
-   style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;"
-   tabindex="-1" aria-hidden="true">priority-api</a>
+<!-- Honeypot -->
+<a href="/trap/exclusive-access" style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;" tabindex="-1" aria-hidden="true">exclusive</a>
+<a href="/api/v1/priority-access"  style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;" tabindex="-1" aria-hidden="true">priority-api</a>
 
 <header class="header">
     <div class="logo">
@@ -121,102 +193,69 @@
             <i class="fa fa-user fa-2x" style="color: black;"></i>
         </a>
     </div>
-    
 </header>
 
 <section class="hero">
-    <h1>Premium Sneakers</h1>
-    <p>Limited Edition • Streetwear • Authentic</p>
-    <!--
-        Shop Now button: bots get redirected to /products/exclusive (fake page),
-        real users go to /products. The server sets bot_flagged via Jinja.
-    -->
-    <button class="shop" id="shop-btn"
-            onclick="handleShopNow()">Shop Now</button>
+  <span class="hero-label">New Season — 2026 Collection</span>
+  <h1>Premium<br>Sneakers</h1>
+  <p>Limited Edition • Streetwear • Authentic</p>
+  <button onclick="window.location.href='/products'">
+    Shop Now &nbsp;<i class="fa fa-arrow-right"></i>
+  </button>
 </section>
 
-<section class="products">
-    <h2>Popular Sneakers</h2>
-    <div class="product-grid" id="product-grid"></div>
+<!-- Brand strip -->
+<div class="brand-strip">
+  <span>Nike</span><span>•</span>
+  <span>Adidas</span><span>•</span>
+  <span>Air Jordan</span><span>•</span>
+  <span>New Balance</span><span>•</span>
+  <span>Puma</span><span>•</span>
+  <span>Converse</span><span>•</span>
+  <span>Reebok</span><span>•</span>
+  <span>Vans</span><span>•</span>
+  <span>Asics</span>
+</div>
+
+<section class="products" style="padding-top:60px;">
+  <span class="section-eyebrow">Trending Now</span>
+  <h2>Popular Picks</h2>
+  <div class="product-grid" id="product-grid"></div>
 </section>
+
+<!-- Feature strip -->
+<div class="features">
+  <div class="feature-card">
+    <i class="fa fa-shield"></i>
+    <h3>100% Authentic</h3>
+    <p>Every pair is verified and sourced directly from authorized retailers.</p>
+  </div>
+  <div class="feature-card">
+    <i class="fa fa-truck"></i>
+    <h3>Free Shipping</h3>
+    <p>Free delivery on all orders above ₹2,000 — pan India.</p>
+  </div>
+  <div class="feature-card">
+    <i class="fa fa-refresh"></i>
+    <h3>Easy Returns</h3>
+    <p>Not the right fit? Return within 30 days, no questions asked.</p>
+  </div>
+</div>
 
 <footer>
-    <p>© 2026 Sneaker Base. All Rights Reserved.</p>
-    <a href="/api/v1/priority-access" style="display:none;">Admin API Access</a>
+  <p>© 2026 Sneaker Base. All Rights Reserved.</p>
 </footer>
 
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
-<script>
-    function showToast(name) {
-        document.getElementById("toast-name").textContent = name;
-        var toast = document.getElementById("cart-toast");
-        toast.classList.add("show");
-        setTimeout(function() { toast.classList.remove("show"); }, 3000);
-    }
-    
-    function addToCartHome(name, price, image) {
-        fetch("/add_to_cart", {
-            method:  "POST",
-            headers: { "Content-Type": "application/json" },
-            body:    JSON.stringify({ name: name, price: price, image: image })
-        })
-        .then(function(res) { return res.json(); })
-        .then(function(data) {
-            // Update cart counter
-            var counter = document.getElementById("cart-count");
-            if (counter) {
-                counter.innerText = data.count;
-            } else {
-                var icon = document.querySelector(".fa-shopping-cart");
-                var span = document.createElement("span");
-                span.id    = "cart-count";
-                span.style = "background:black;color:white;border-radius:50%;padding:2px 6px;font-size:12px;vertical-align:top;";
-                span.innerText = data.count;
-                icon.parentElement.appendChild(span);
-            }
-            // Show toast
-            showToast(name);
-        })
-        .catch(function() { alert("Error adding to cart."); });
-    }
-    
-    async function loadSneakers() {
-        try {
-            const res  = await fetch("/api/sneakers");
-            if (!res.ok) throw new Error("API " + res.status);
-            const data = await res.json();
-            const grid = document.getElementById("product-grid");
-            if (!grid) return;
-            grid.innerHTML = "";
-            data.forEach(function(shoe) {
-                var card = document.createElement("div");
-                card.className = "product";
-                card.innerHTML =
-                    '<button class="fav-btn" onclick="toggleHeart(this,\'' + shoe.name + '\',\'' + shoe.price + '\',\'' + shoe.image + '\')">' +
-                        '<i class="fa fa-heart"></i>' +
-                    '</button>' +
-                    '<a href="/product/' + shoe.id + '" style="text-decoration:none;color:inherit;">' +
-                        '<img src="' + shoe.image + '">' +
-                        '<h3>' + shoe.name + '</h3>' +
-                        '<p>' + shoe.price + '</p>' +
-                    '</a>' +
-                    '<button class="product-cart-btn" onclick="addToCartHome(\'' + shoe.name + '\',\'' + shoe.price + '\',\'' + shoe.image + '\')">Add to Cart</button>';
-                grid.appendChild(card);
-            });
-        } catch (err) {
-            var grid = document.getElementById("product-grid");
-            if (grid) grid.innerHTML = "<p style='color:red'>Failed to load sneakers.</p>";
-        }
-    }
-    
-    loadSneakers();
-    </script>
+<!-- Toast -->
 <div class="toast" id="cart-toast">
-    <div class="toast-text">
-        <span class="toast-title">✓ Added to cart</span>
-        <span class="toast-name" id="toast-name"></span>
-    </div>
+  <img id="toast-img" src="" alt="" onerror="this.style.display='none'">
+  <div class="toast-text">
+    <span class="toast-title">✓ Added to cart</span>
+    <span class="toast-name" id="toast-name"></span>
+  </div>
 </div>
+
 </body>
 </html>
