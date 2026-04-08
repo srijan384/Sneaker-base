@@ -578,15 +578,6 @@ def debug_unblock_me():
     return jsonify({"status": "unblocked", "ip": ip})
 
 
-# ── Unchanged routes ──────────────────────────────────────────────
-# ================================================================
-# PASTE THESE TWO ROUTES INTO YOUR app.py
-# Replace the existing toggle_wishlist and api_sneakers routes
-# ================================================================
-
-
-
-# ── Fix 2: api_sneakers includes display_price ────────────────────
 @app.route("/api/sneakers")
 def api_sneakers():
     ip      = get_client_ip()
