@@ -242,6 +242,32 @@ body { background: #f7f6f4; font-family: 'Barlow', sans-serif; }
 </style>
 </head>
 <body>
+  <header class="header">
+    <div class="logo">
+        <img src="/static/assets/images/logo.png" alt="Sneaker Base">
+    </div>
+
+    <nav class="nav-links">
+        <a href="/">Home</a>
+        <a href="/products?category=unisex">Unisex</a>
+        <a href="/products?category=new">New In</a>
+
+        <div class="dropdown">
+            <a href="#">Brands ▾</a>
+            <div class="dropdown-content">
+                <a href="/products?brand=Jordan">Air Jordan</a>
+                <a href="/products?brand=Nike">Nike</a>
+                <a href="/products?brand=Adidas">Adidas</a>
+                <a href="/products?brand=Yeezy">Yeezy</a>
+                <a href="/products">All Brands</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="icons">
+        <!-- same icons -->
+    </div>
+</header>
 
 <script src="{{ url_for('static', filename='js/bot_detect.js') }}"></script>
 <a href="/trap/exclusive-access" style="position:absolute;left:-9999px;top:-9999px;width:0;height:0;overflow:hidden;opacity:0;" tabindex="-1" aria-hidden="true">exclusive</a>
