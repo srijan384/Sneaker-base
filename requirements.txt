@@ -1,4 +1,9 @@
 flask
 faker
-gunicorn
 redis
+pymongo
+werkzeug
+authlib
+requests
+python-dotenv
+gunicorn
