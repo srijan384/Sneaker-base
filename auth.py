@@ -14,6 +14,7 @@ from flask import (Blueprint, request, jsonify, session,
                    redirect, url_for, render_template)
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
 # ── Google OAuth ──────────────────────────────────────────────────
 try:
     from authlib.integrations.flask_client import OAuth

@@ -2,7 +2,9 @@ import random
 import time
 import json
 from datetime import datetime
+import os
 from faker import Faker
+from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import os
 
